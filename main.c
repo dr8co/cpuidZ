@@ -13,8 +13,7 @@ void cpuid(int leaf, uint32_t registers[4])
 }
 
 // Function to check specific feature availability in a register
-int is_feature_supported(const uint32_t reg, const int bit)
-{
+int is_feature_supported(const uint32_t reg, const int bit) {
     return (reg & (1 << bit)) != 0;
 }
 
@@ -32,55 +31,33 @@ int main()
     printf("Checking Standard Feature Flags (CPUID Leaf 1):\n");
 
     // EDX flags
-    printf(" - SSE: %s\n", is_feature_supported(registers[3], 25)
-                               ? "Supported"
-                               : "Not supported");
-    printf(" - SSE2: %s\n", is_feature_supported(registers[3], 26)
-                                ? "Supported"
-                                : "Not supported");
+    printf(" - SSE: %s\n", is_feature_supported(registers[3], 25) ? "Supported" : "Not supported");
+    printf(" - SSE2: %s\n", is_feature_supported(registers[3], 26) ? "Supported" : "Not supported");
 
     // ECX flags
-    printf(" - SSE3: %s\n", is_feature_supported(registers[2], 0)
-                                ? "Supported"
-                                : "Not supported");
-    printf(" - SSSE3: %s\n", is_feature_supported(registers[2], 9)
-                                 ? "Supported"
-                                 : "Not supported");
-    printf(" - SSE4.1: %s\n", is_feature_supported(registers[2], 19)
-                                  ? "Supported"
-                                  : "Not supported");
-    printf(" - SSE4.2: %s\n", is_feature_supported(registers[2], 20)
-                                  ? "Supported"
-                                  : "Not supported");
-    printf(" - AVX: %s\n", is_feature_supported(registers[2], 28)
-                               ? "Supported"
-                               : "Not supported");
+    printf(" - SSE3: %s\n", is_feature_supported(registers[2], 0) ? "Supported" : "Not supported");
+    printf(" - SSSE3: %s\n", is_feature_supported(registers[2], 9) ? "Supported" : "Not supported");
+    printf(" - SSE4.1: %s\n", is_feature_supported(registers[2], 19) ? "Supported" : "Not supported");
+    printf(" - SSE4.2: %s\n", is_feature_supported(registers[2], 20) ? "Supported" : "Not supported");
+    printf(" - AVX: %s\n", is_feature_supported(registers[2], 28) ? "Supported" : "Not supported");
+    printf(" - AES: %s\n", is_feature_supported(registers[2], 25) ? "Supported" : "Not supported");
+    printf(" - FMA: %s\n", is_feature_supported(registers[2], 12) ? "Supported" : "Not supported");
 
     // Check for extended feature flags (CPUID Leaf 7)
-    if (highest_leaf >= 7)
-    {
+    if (highest_leaf >= 7) {
         cpuid(7, registers);
         printf("Checking Extended Feature Flags (CPUID Leaf 7):\n");
 
         // EBX flags
-        printf(" - AVX2: %s\n", is_feature_supported(registers[1], 5)
-                                    ? "Supported"
-                                    : "Not supported");
-        printf(" - AVX512F: %s\n", is_feature_supported(registers[1], 16)
-                                       ? "Supported"
-                                       : "Not supported");
-        printf(" - AVX512DQ: %s\n", is_feature_supported(registers[1], 17)
-                                        ? "Supported"
-                                        : "Not supported");
-        printf(" - AVX512BW: %s\n", is_feature_supported(registers[1], 30)
-                                        ? "Supported"
-                                        : "Not supported");
-        printf(" - AVX512VL: %s\n", is_feature_supported(registers[1], 31)
-                                        ? "Supported"
-                                        : "Not supported");
-    }
-    else
-    {
+        printf(" - AVX2: %s\n", is_feature_supported(registers[1], 5) ? "Supported" : "Not supported");
+        printf(" - AVX512F: %s\n", is_feature_supported(registers[1], 16) ? "Supported" : "Not supported");
+        printf(" - AVX512DQ: %s\n", is_feature_supported(registers[1], 17) ? "Supported" : "Not supported");
+        printf(" - AVX512BW: %s\n", is_feature_supported(registers[1], 30) ? "Supported" : "Not supported");
+        printf(" - AVX512VL: %s\n", is_feature_supported(registers[1], 31) ? "Supported" : "Not supported");
+        printf(" - BMI1: %s\n", is_feature_supported(registers[1], 3) ? "Supported" : "Not supported");
+        printf(" - BMI2: %s\n", is_feature_supported(registers[1], 8) ? "Supported" : "Not supported");
+        printf(" - SHA: %s\n", is_feature_supported(registers[1], 29) ? "Supported" : "Not supported");
+    } else {
         printf("Extended feature flags not supported on this CPU.\n");
     }
 
