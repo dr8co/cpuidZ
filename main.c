@@ -29,8 +29,18 @@ int is_feature_supported(const uint32_t reg, const int bit) {
     return (reg & (1 << bit)) != 0;
 }
 
-int main()
-{
+extern int check_cpuid();
+
+int main() {
+    const int supported = check_cpuid();
+    if (supported) {
+        printf("CPUID is supported.\n");
+    } else {
+        printf("CPUID is not supported.\n");
+        return 1;
+    }
+
+
     uint32_t registers[4] = {0}; // Registers: EAX, EBX, ECX, EDX
 
     // Query the basic CPUID information
