@@ -2,14 +2,26 @@
 #include <stdint.h>
 
 // Function to execute the CPUID instruction
-void cpuid(int leaf, uint32_t registers[4])
-{
-    __asm__ __volatile__ (
-        "cpuid"
-        : "=a"(registers[0]), "=b"(registers[1]), "=c"(registers[2]), "=d"(registers
-            [3])
-        : "a"(leaf)
-    );
+void cpuid(uint32_t leaf, uint32_t registers[4]) {
+#if defined(__GNUC__) || defined(__clang__)
+    __cpuid(leaf, registers[0], registers[1], registers[2], registers[3]);
+#elif defined(_MSC_VER)
+    __cpuid(registers, leaf);
+#else
+#ifdef __x86_64__
+    __asm__ volatile (
+        "  xchgq  %%rbx,%q1\n"
+        "  cpuid\n"
+        "  xchgq  %%rbx,%q1"
+        : "=a" (registers[0]), "=r" (registers[1]), "=c" (registers[2]), "=d" (registers[3])
+        : "0" (leaf));
+#else
+    __asm__ volatile (
+        "cpuid\n"
+        : "=a" (registers[0]), "=b" (registers[1]), "=c" (registers[2]), "=d" (registers[3])
+        : "0" (leaf));
+#endif
+#endif
 }
 
 // Function to check specific feature availability in a register
