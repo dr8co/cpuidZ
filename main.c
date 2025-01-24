@@ -219,6 +219,27 @@ enum ebx_0x14_0_features {
     b_PTWRITE = 0x00000010,
 };
 
+// Keylocker leaf (%eax == 0x19)
+enum keylocker_features {
+    b_AESKLE = 0x00000001,
+    b_WIDEKL = 0x00000004,
+};
+
+// Features in %eax for AMX sub-leaf (%eax == 0x1e, %ecx == 1)
+enum amx_features {
+    b_AMXFP8 = 0x00000010,
+    b_AMX_TRANSPOSE = 0x00000020,
+    b_AMX_TF32 = 0x00000040,
+    b_AMX_AVX512 = 0x00000080,
+    b_AMX_MOVRS = 0x00000100,
+};
+
+// Features in ebx for leaf 0x24
+enum ebx_0x24_features {
+    b_AVX10_256 = 0x00020000,
+    b_AVX10_512 = 0x00040000,
+};
+
 // Features in ecx for leaf 0x80000001
 enum ecx_0x80000001_features {
     b_LAHF_LM = 0x00000001,
@@ -245,100 +266,6 @@ enum ebx_0x80000008_features {
     b_CLZERO = 0x00000001,
     b_RDPRU = 0x00000010,
     b_WBNOINVD = 0x00000200,
-};
-
-// Features in ebx for leaf 0x24
-enum ebx_0x24_features {
-    b_AVX10_256 = 0x00020000,
-    b_AVX10_512 = 0x00040000,
-};
-
-// AMX sub-leaf (%eax == 0x1e, %ecx == 1)
-enum amx_features {
-    b_AMXFP8 = 0x00000010,
-    b_AMX_TRANSPOSE = 0x00000020,
-    b_AMX_TF32 = 0x00000040,
-    b_AMX_AVX512 = 0x00000080,
-    b_AMX_MOVRS = 0x00000100,
-};
-
-// Keylocker leaf (%eax == 0x19)
-enum keylocker_features {
-    b_AESKLE = 0x00000001,
-    b_WIDEKL = 0x00000004,
-};
-
-// CPU signatures
-enum cpu_signatures {
-    // AMD: "AuthenticAMD"
-    AMD_ebx = 0x68747541,
-    AMD_edx = 0x69746e65,
-    AMD_ecx = 0x444d4163,
-
-    // CENTAUR: "CentaurHauls"
-    CENTAUR_ebx = 0x746e6543,
-    CENTAUR_edx = 0x48727561,
-    CENTAUR_ecx = 0x736c7561,
-
-    // CYRIX: "CyrixInstead"
-    CYRIX_ebx = 0x69727943,
-    CYRIX_edx = 0x736e4978,
-    CYRIX_ecx = 0x64616574,
-
-    // HYGON: "HygonGenuine"
-    HYGON_ebx = 0x6f677948,
-    HYGON_edx = 0x6e65476e,
-    HYGON_ecx = 0x656e6975,
-
-    // INTEL: "GenuineIntel"
-    INTEL_ebx = 0x756e6547,
-    INTEL_edx = 0x49656e69,
-    INTEL_ecx = 0x6c65746e,
-
-    // TM1: "TransmetaCPU"
-    TM1_ebx = 0x6e617254,
-    TM1_edx = 0x74656d73,
-    TM1_ecx = 0x55504361,
-
-    // TM2: "GenuineTMx86"
-    TM2_ebx = 0x756e6547,
-    TM2_edx = 0x54656e69,
-    TM2_ecx = 0x3638784d,
-
-    // NSC: "Geode by NSC"
-    NSC_ebx = 0x646f6547,
-    NSC_edx = 0x79622065,
-    NSC_ecx = 0x43534e20,
-
-    // NEXGEN: "NexGenDriven"
-    NEXGEN_ebx = 0x4778654e,
-    NEXGEN_edx = 0x72446e65,
-    NEXGEN_ecx = 0x6e657669,
-
-    // RISE: "RiseRiseRise"
-    RISE_ebx = 0x65736952,
-    RISE_edx = 0x65736952,
-    RISE_ecx = 0x65736952,
-
-    // SIS: "SiS SiS SiS "
-    SIS_ebx = 0x20536953,
-    SIS_edx = 0x20536953,
-    SIS_ecx = 0x20536953,
-
-    // UMC: "UMC UMC UMC "
-    UMC_ebx = 0x20434d55,
-    UMC_edx = 0x20434d55,
-    UMC_ecx = 0x20434d55,
-
-    // VIA: "VIA VIA VIA "
-    VIA_ebx = 0x20414956,
-    VIA_edx = 0x20414956,
-    VIA_ecx = 0x20414956,
-
-    // VORTEX: "Vortex86 SoC"
-    VORTEX_ebx = 0x74726f56,
-    VORTEX_edx = 0x36387865,
-    VORTEX_ecx = 0x436f5320,
 };
 
 typedef struct {
@@ -521,6 +448,15 @@ typedef struct {
     bool XSAVES;
     bool XSAVEXFD;
     bool PTWRITE;
+    bool AESKLE;
+    bool WIDEKL;
+    bool AMXFP8;
+    bool AMX_TRANSPOSE;
+    bool AMX_TF32;
+    bool AMX_AVX512;
+    bool AMX_MOVRS;
+    bool AVX10_256;
+    bool AVX10_512;
     bool LAHF_LM;
     bool ABM;
     bool SSE4a;
@@ -537,15 +473,6 @@ typedef struct {
     bool CLZERO;
     bool RDPRU;
     bool WBNOINVD;
-    bool AVX10_256;
-    bool AVX10_512;
-    bool AMXFP8;
-    bool AMX_TRANSPOSE;
-    bool AMX_TF32;
-    bool AMX_AVX512;
-    bool AMX_MOVRS;
-    bool AESKLE;
-    bool WIDEKL;
 } cpu_features;
 
 // Function to execute the CPUID instruction
@@ -717,17 +644,18 @@ void print_available_features(const cpu_features* feats) {
         "XSAVEC: XSAVEC instruction: save/restore state with compaction",
         "XSAVES: XSAVES and XRSTORS instructions and IA32_XSS MSR",
         "XSAVEXFD: XFD (Extended Feature Disable) supported", "PTWRITE: PTWRITE instruction supported",
+        "AESKLE: AES \"Key Locker\" Instructions enabled", "WIDEKL: AES \"Wide Key Locker\" Instructions",
+        "AMXFP8: AMX float8 support",
+        "AMX_TRANSPOSE: AMX Transposition instruction support", "AMX_TF32: AMX tf32/fp19 support",
+        "AMX_AVX512: AMX-AVX512 support", "AMX_MOVRS: AMX-MOVRS support",
+        "AVX10_256: 256-bit vector support is present", "AVX10_512: 512-bit vector support is present",
         "LAHF_LM: LAHF/SAHF in long mode", "ABM: Advanced bit manipulation (LZCNT and POPCNT)",
         "SSE4a: SSE4a instructions",
         "PRFCHW: PREFETCH and PREFETCHW instructions", "XOP: XOP instruction set", "LWP: Light Weight Profiling",
         "FMA4: 4-operand fused multiply-add instructions", "TBM: Trailing Bit Manipulation",
         "MWAITX: MONITORX and MWAITX instructions", "MMXEXT: Extended MMX", "LM: Long mode",
         "3DNOWP: Extended 3DNow!", "3DNOW: 3DNow!", "CLZERO: CLZERO instruction", "RDPRU: RDPRU instruction",
-        "WBNOINVD: WBNOINVD instruction", "AVX10_256: 256-bit vector support is present",
-        "AVX10_512: 512-bit vector support is present", "AMXFP8: AMX float8 support",
-        "AMX_TRANSPOSE: AMX Transposition instruction support", "AMX_TF32: AMX tf32/fp19 support",
-        "AMX_AVX512: AMX-AVX512 support", "AMX_MOVRS: AMX-MOVRS support",
-        "AESKLE: AES \"Key Locker\" Instructions enabled", "WIDEKL: AES \"Wide Key Locker\" Instructions"
+        "WBNOINVD: WBNOINVD instruction",
     };
 
     const bool* feature_values = (const bool*)feats;
@@ -995,6 +923,37 @@ int main() {
         features.PTWRITE = registers[1] & b_PTWRITE;
     }
 
+    // Keylocker leaf (leaf 0x19)
+    if (basic_info.highest_extended_leaf >= 0x19) {
+        cpuid(0x19, registers);
+
+        // %eax flags
+        features.AESKLE = registers[0] & b_AESKLE;
+        features.WIDEKL = registers[0] & b_WIDEKL;
+    }
+
+    // AMX sub-leaf
+    if (basic_info.highest_extended_leaf >= 0x1e) {
+        // sub-leaf 1
+        cpuid_extended(0x1e, 1, registers);
+
+        // %eax flags
+        features.AMXFP8 = registers[0] & b_AMXFP8;
+        features.AMX_TRANSPOSE = registers[0] & b_AMX_TRANSPOSE;
+        features.AMX_TF32 = registers[0] & b_AMX_TF32;
+        features.AMX_AVX512 = registers[0] & b_AMX_AVX512;
+        features.AMX_MOVRS = registers[0] & b_AMX_MOVRS;
+    }
+
+    // Leaf 0x24
+    if (basic_info.highest_extended_leaf >= 0x24) {
+        cpuid_extended(0x24, 0, registers);
+
+        // %ebx flags
+        features.AVX10_256 = registers[1] & b_AVX10_256;
+        features.AVX10_512 = registers[1] & b_AVX10_512;
+    }
+
     // Leaf 0x80000001
     if (basic_info.highest_extended_leaf >= 0x80000001) {
         cpuid(0x80000001, registers);
@@ -1025,37 +984,6 @@ int main() {
         features.CLZERO = registers[1] & b_CLZERO;
         features.RDPRU = registers[1] & b_RDPRU;
         features.WBNOINVD = registers[1] & b_WBNOINVD;
-    }
-
-    // Leaf 0x24
-    if (basic_info.highest_extended_leaf >= 0x24) {
-        cpuid_extended(0x24, 0, registers);
-
-        // %ebx flags
-        features.AVX10_256 = registers[1] & b_AVX10_256;
-        features.AVX10_512 = registers[1] & b_AVX10_512;
-    }
-
-    // AMX sub-leaf
-    if (basic_info.highest_extended_leaf >= 0x1e) {
-        // sub-leaf 1
-        cpuid_extended(0x1e, 1, registers);
-
-        // %eax flags
-        features.AMXFP8 = registers[0] & b_AMXFP8;
-        features.AMX_TRANSPOSE = registers[0] & b_AMX_TRANSPOSE;
-        features.AMX_TF32 = registers[0] & b_AMX_TF32;
-        features.AMX_AVX512 = registers[0] & b_AMX_AVX512;
-        features.AMX_MOVRS = registers[0] & b_AMX_MOVRS;
-    }
-
-    // Keylocker leaf
-    if (basic_info.highest_extended_leaf >= 0x19) {
-        cpuid(0x19, registers);
-
-        // %eax flags
-        features.AESKLE = registers[0] & b_AESKLE;
-        features.WIDEKL = registers[0] & b_WIDEKL;
     }
 
     print_available_features(&features);
