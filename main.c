@@ -9,8 +9,8 @@
 #endif
 
 
-// Features in ecx for CPUID leaf 1
-enum ecx_leaf1_features {
+enum {
+    // Features in ecx for CPUID leaf 1
     b_SSE3 = 0x00000001,
     b_PCLMULQDQ = 0x00000002,
     b_DTES64 = 0x00000004,
@@ -42,10 +42,8 @@ enum ecx_leaf1_features {
     b_F16C = 0x20000000,
     b_RDRND = 0x40000000,
     b_HYPRVSR = 0x80000000,
-};
 
-// Features in edx for leaf 1
-enum edx_leaf1_features {
+    // Features in edx for leaf 1
     b_FPU = 0x00000001,
     b_VME = 0x00000002,
     b_DE = 0x00000004,
@@ -76,10 +74,8 @@ enum edx_leaf1_features {
     b_TM = 0x20000000,
     b_IA64 = 0x40000000,
     b_PBE = 0x80000000,
-};
 
-// Features in ebx for leaf 7 sub-leaf 0
-enum ebx_leaf7_0_features {
+    // Features in ebx for leaf 7 sub-leaf 0
     b_FSGSBASE = 0x00000001,
     b_SGX = 0x00000004,
     b_BMI = 0x00000008,
@@ -107,10 +103,8 @@ enum ebx_leaf7_0_features {
     b_SHA = 0x20000000,
     b_AVX512BW = 0x40000000,
     b_AVX512VL = 0x80000000,
-};
 
-// Features in ecx for leaf 7 sub-leaf 0
-enum ecx_leaf7_0_features {
+    // Features in ecx for leaf 7 sub-leaf 0
     b_PREFTCHWT1 = 0x00000001,
     b_AVX512VBMI = 0x00000002,
     b_UMIP = 0x00000004,
@@ -136,11 +130,8 @@ enum ecx_leaf7_0_features {
     b_ENQCMD = 0x20000000,
     b_SGXLC = 0x40000000,
     b_PKS = 0x80000000,
-};
 
-
-// Features in edx for leaf 7 sub-leaf 0
-enum edx_leaf7_0_features {
+    // Features in edx for leaf 7 sub-leaf 0
     b_SGXKEYS = 0x00000002,
     b_AVX5124VNNIW = 0x00000004,
     b_AVX5124FMAPS = 0x00000008,
@@ -167,10 +158,8 @@ enum edx_leaf7_0_features {
     b_IA32_ARCH_CAPABILITIES = 0x20000000,
     b_IA32_CORE_CAPABILITIES = 0x40000000,
     b_SSBD = 0x80000000,
-};
 
-// Features in eax for leaf 7 sub-leaf 1
-enum eax_leaf7_1_features {
+    // Features in eax for leaf 7 sub-leaf 1
     b_SHA512 = 0x00000001,
     b_SM3 = 0x00000002,
     b_SM4 = 0x00000004,
@@ -187,15 +176,11 @@ enum eax_leaf7_1_features {
     b_AVXIFMA = 0x00800000,
     b_MSRLIST = 0x08000000,
     b_MOVRS = 0x80000000,
-};
 
-// Features in ebx for leaf 7 sub-leaf 1
-enum ebx_leaf7_1_features {
+    // Features in ebx for leaf 7 sub-leaf 1
     b_PBNDKB = 0x00000002,
-};
 
-// Features in edx for leaf 7 sub-leaf 1
-enum edx_leaf7_1_features {
+    // Features in edx for leaf 7 sub-leaf 1
     b_AVXVNNIINT8 = 0x00000010,
     b_AVXNECONVERT = 0x00000020,
     b_AMXCOMPLEX = 0x00000100,
@@ -204,44 +189,32 @@ enum edx_leaf7_1_features {
     b_USERMSR = 0x00008000,
     b_AVX10 = 0x00080000,
     b_APXF = 0x00200000,
-};
 
-// Features in eax for leaf 13 sub-leaf 1
-enum eax_leaf13_1_features {
+    // Features in eax for leaf 13 sub-leaf 1
     b_XSAVEOPT = 0x00000001,
     b_XSAVEC = 0x00000002,
     b_XSAVES = 0x00000008,
     b_XSAVEXFD = 0x00000010,
-};
 
-// Features in ebx for leaf 0x14 sub-leaf 0
-enum ebx_0x14_0_features {
+    // Features in ebx for leaf 0x14 sub-leaf 0
     b_PTWRITE = 0x00000010,
-};
 
-// Keylocker leaf (%eax == 0x19)
-enum keylocker_features {
+    // Keylocker leaf (%eax == 0x19)
     b_AESKLE = 0x00000001,
     b_WIDEKL = 0x00000004,
-};
 
-// Features in %eax for AMX sub-leaf (%eax == 0x1e, %ecx == 1)
-enum amx_features {
+    // Features in %eax for AMX sub-leaf (%eax == 0x1e, %ecx == 1)
     b_AMXFP8 = 0x00000010,
     b_AMX_TRANSPOSE = 0x00000020,
     b_AMX_TF32 = 0x00000040,
     b_AMX_AVX512 = 0x00000080,
     b_AMX_MOVRS = 0x00000100,
-};
 
-// Features in ebx for leaf 0x24
-enum ebx_0x24_features {
+    // Features in ebx for leaf 0x24
     b_AVX10_256 = 0x00020000,
     b_AVX10_512 = 0x00040000,
-};
 
-// Features in ecx for leaf 0x80000001
-enum ecx_0x80000001_features {
+    // Features in ecx for leaf 0x80000001
     b_LAHF_LM = 0x00000001,
     b_ABM = 0x00000020,
     b_SSE4a = 0x00000040,
@@ -251,18 +224,14 @@ enum ecx_0x80000001_features {
     b_FMA4 = 0x00010000,
     b_TBM = 0x00200000,
     b_MWAITX = 0x20000000,
-};
 
-// Features in edx for leaf 0x80000001
-enum edx_0x80000001_features {
+    // Features in edx for leaf 0x80000001
     b_MMXEXT = 0x00400000,
     b_LM = 0x20000000,
     b_3DNOWP = 0x40000000,
     b_3DNOW = 0x80000000,
-};
 
-// Features in ebx for leaf 0x80000008
-enum ebx_0x80000008_features {
+    // Features in ebx for leaf 0x80000008
     b_CLZERO = 0x00000001,
     b_RDPRU = 0x00000010,
     b_WBNOINVD = 0x00000200,
@@ -670,7 +639,7 @@ void print_available_features(const cpu_features* feats) {
 
 int main() {
     if (!check_cpuid()) {
-        printf("CPUID is not supported.\n");
+        fputs("CPUID instruction is not supported by your cpu.\n", stderr);
         return 1;
     }
 
@@ -679,314 +648,317 @@ int main() {
 
     // Query the basic CPUID information
     cpuid(0, registers);
-    basic_info.highest_leaf = registers[0];
 
-    // Check for the CPU vendor
-    memcpy(basic_info.vendor, &registers[1], 4);
-    memcpy(basic_info.vendor + 4, &registers[3], 4);
-    memcpy(basic_info.vendor + 8, &registers[2], 4);
-    basic_info.vendor[12] = '\0';
+    if ((basic_info.highest_leaf = registers[0])) {
+        // Check for the CPU vendor
+        memcpy(basic_info.vendor, &registers[1], 4);
+        memcpy(basic_info.vendor + 4, &registers[3], 4);
+        memcpy(basic_info.vendor + 8, &registers[2], 4);
+        basic_info.vendor[12] = '\0';
 
-    // Highest extended function calling parameter
-    cpuid(0x80000000, registers);
-    basic_info.highest_extended_leaf = registers[0];
+        // Highest extended function calling parameter
+        cpuid(0x80000000, registers);
+        basic_info.highest_extended_leaf = registers[0];
 
-    // Check for the CPU brand string
-    if (basic_info.highest_extended_leaf >= 0x80000004) {
-        cpuid(0x80000002, registers);
-        memcpy(basic_info.brand, registers, 16);
-        cpuid(0x80000003, registers);
-        memcpy(basic_info.brand + 16, registers, 16);
-        cpuid(0x80000004, registers);
-        memcpy(basic_info.brand + 32, registers, 16);
-        basic_info.brand[48] = '\0';
+        // Check for the CPU brand string
+        if (basic_info.highest_extended_leaf >= 0x80000004) {
+            cpuid(0x80000002, registers);
+            memcpy(basic_info.brand, registers, 16);
+            cpuid(0x80000003, registers);
+            memcpy(basic_info.brand + 16, registers, 16);
+            cpuid(0x80000004, registers);
+            memcpy(basic_info.brand + 32, registers, 16);
+            basic_info.brand[48] = '\0';
+        }
+
+        // Check for the CPU family, model, and stepping
+        cpuid(1, registers);
+        basic_info.family = ((registers[0] >> 8) & 0xF) + ((registers[0] >> 20) & 0xFF);
+        basic_info.model = ((registers[0] >> 4) & 0xF) + ((registers[0] >> 12) & 0xF0);
+        basic_info.stepping = registers[0] & 0xF;
+
+        print_basic_info(&basic_info);
+
+        // Check for standard feature flags (CPUID Leaf 1)
+        cpu_features features = {
+            // %ecx flags
+            .SSE3 = registers[2] & b_SSE3,
+            .PCLMULQDQ = registers[2] & b_PCLMULQDQ,
+            .DTES64 = registers[2] & b_DTES64,
+            .MONITOR = registers[2] & b_MONITOR,
+            .DSCPL = registers[2] & b_DSCPL,
+            .VMX = registers[2] & b_VMX,
+            .SMX = registers[2] & b_SMX,
+            .EIST = registers[2] & b_EIST,
+            .TM2 = registers[2] & b_TM2,
+            .SSSE3 = registers[2] & b_SSSE3,
+            .CNXTID = registers[2] & b_CNXTID,
+            .SDBG = registers[2] & b_SDBG,
+            .FMA = registers[2] & b_FMA,
+            .CMPXCHG16B = registers[2] & b_CMPXCHG16B,
+            .xTPR = registers[2] & b_xTPR,
+            .PDCM = registers[2] & b_PDCM,
+            .PCID = registers[2] & b_PCID,
+            .DCA = registers[2] & b_DCA,
+            .SSE41 = registers[2] & b_SSE41,
+            .SSE42 = registers[2] & b_SSE42,
+            .x2APIC = registers[2] & b_x2APIC,
+            .MOVBE = registers[2] & b_MOVBE,
+            .POPCNT = registers[2] & b_POPCNT,
+            .TSCDeadline = registers[2] & b_TSCDeadline,
+            .AESNI = registers[2] & b_AESNI,
+            .XSAVE = registers[2] & b_XSAVE,
+            .OSXSAVE = registers[2] & b_OSXSAVE,
+            .AVX = registers[2] & b_AVX,
+            .F16C = registers[2] & b_F16C,
+            .RDRND = registers[2] & b_RDRND,
+            .HYPRVSR = registers[2] & b_HYPRVSR,
+
+            // %edx flags
+            .FPU = registers[3] & b_FPU,
+            .VME = registers[3] & b_VME,
+            .DE = registers[3] & b_DE,
+            .PSE = registers[3] & b_PSE,
+            .TSC = registers[3] & b_TSC,
+            .MSR = registers[3] & b_MSR,
+            .PAE = registers[3] & b_PAE,
+            .MCE = registers[3] & b_MCE,
+            .CX8 = registers[3] & b_CX8,
+            .APIC = registers[3] & b_APIC,
+            .SEP = registers[3] & b_SEP,
+            .MTRR = registers[3] & b_MTRR,
+            .PGE = registers[3] & b_PGE,
+            .MCA = registers[3] & b_MCA,
+            .CMOV = registers[3] & b_CMOV,
+            .PAT = registers[3] & b_PAT,
+            .PSE36 = registers[3] & b_PSE36,
+            .PSN = registers[3] & b_PSN,
+            .CLFSH = registers[3] & b_CLFSH,
+            .DS = registers[3] & b_DS,
+            .ACPI = registers[3] & b_ACPI,
+            .MMX = registers[3] & b_MMX,
+            .FXSR = registers[3] & b_FXSR,
+            .SSE = registers[3] & b_SSE,
+            .SSE2 = registers[3] & b_SSE2,
+            .SS = registers[3] & b_SS,
+            .HTT = registers[3] & b_HTT,
+            .TM = registers[3] & b_TM,
+            .IA64 = registers[3] & b_IA64,
+            .PBE = registers[3] & b_PBE,
+        };
+
+        // Check for extended feature flags (CPUID Leaf 7)
+        if (basic_info.highest_leaf >= 7) {
+            // sub-leaf 0
+            cpuid_extended(7, 0, registers);
+
+            // %ebx flags
+            features.FSGSBASE = registers[1] & b_FSGSBASE;
+            features.SGX = registers[1] & b_SGX;
+            features.BMI = registers[1] & b_BMI;
+            features.HLE = registers[1] & b_HLE;
+            features.FDPXO = registers[1] & b_FDPXO;
+            features.AVX2 = registers[1] & b_AVX2;
+            features.SMEP = registers[1] & b_SMEP;
+            features.BMI2 = registers[1] & b_BMI2;
+            features.ENH_MOVSB = registers[1] & b_ENH_MOVSB;
+            features.INVPCID = registers[1] & b_INVPCID;
+            features.RTM = registers[1] & b_RTM;
+            features.MPX = registers[1] & b_MPX;
+            features.AVX512F = registers[1] & b_AVX512F;
+            features.AVX512DQ = registers[1] & b_AVX512DQ;
+            features.RDSEED = registers[1] & b_RDSEED;
+            features.ADX = registers[1] & b_ADX;
+            features.SMAP = registers[1] & b_SMAP;
+            features.AVX512IFMA = registers[1] & b_AVX512IFMA;
+            features.CLFLUSHOPT = registers[1] & b_CLFLUSHOPT;
+            features.CLWB = registers[1] & b_CLWB;
+            features.PT = registers[1] & b_PT;
+            features.AVX512PF = registers[1] & b_AVX512PF;
+            features.AVX512ER = registers[1] & b_AVX512ER;
+            features.AVX512CD = registers[1] & b_AVX512CD;
+            features.SHA = registers[1] & b_SHA;
+            features.AVX512BW = registers[1] & b_AVX512BW;
+            features.AVX512VL = registers[1] & b_AVX512VL;
+
+            // %ecx flags
+            features.PREFTCHWT1 = registers[2] & b_PREFTCHWT1;
+            features.AVX512VBMI = registers[2] & b_AVX512VBMI;
+            features.UMIP = registers[2] & b_UMIP;
+            features.PKU = registers[2] & b_PKU;
+            features.OSPKE = registers[2] & b_OSPKE;
+            features.WAITPKG = registers[2] & b_WAITPKG;
+            features.AVX512VBMI2 = registers[2] & b_AVX512VBMI2;
+            features.SHSTK = registers[2] & b_SHSTK;
+            features.GFNI = registers[2] & b_GFNI;
+            features.VAES = registers[2] & b_VAES;
+            features.VPCLMULQDQ = registers[2] & b_VPCLMULQDQ;
+            features.AVX512VNNI = registers[2] & b_AVX512VNNI;
+            features.AVX512BITALG = registers[2] & b_AVX512BITALG;
+            features.TMEM = registers[2] & b_TMEM;
+            features.AVX512VPOPCNTDQ = registers[2] & b_AVX512VPOPCNTDQ;
+            features.IA57 = registers[2] & b_IA57;
+            features.RDPID = registers[2] & b_RDPID;
+            features.KL = registers[2] & b_KL;
+            features.BLD = registers[2] & b_BLD;
+            features.CLDEMOTE = registers[2] & b_CLDEMOTE;
+            features.MOVDIRI = registers[2] & b_MOVDIRI;
+            features.MOVDIR64B = registers[2] & b_MOVDIR64B;
+            features.ENQCMD = registers[2] & b_ENQCMD;
+            features.SGXLC = registers[2] & b_SGXLC;
+            features.PKS = registers[2] & b_PKS;
+
+            // %edx flags
+            features.SGXKEYS = registers[3] & b_SGXKEYS;
+            features.AVX5124VNNIW = registers[3] & b_AVX5124VNNIW;
+            features.AVX5124FMAPS = registers[3] & b_AVX5124FMAPS;
+            features.FSRM = registers[3] & b_FSRM;
+            features.UINTR = registers[3] & b_UINTR;
+            features.AVX512VP2INTERSECT = registers[3] & b_AVX512VP2INTERSECT;
+            features.SRBDSCTRL = registers[3] & b_SRBDSCTRL;
+            features.MDCLEAR = registers[3] & b_MDCLEAR;
+            features.RTMAA = registers[3] & b_RTMAA;
+            features.RTMFA = registers[3] & b_RTMFA;
+            features.SERIALIZE = registers[3] & b_SERIALIZE;
+            features.HYBRID = registers[3] & b_HYBRID;
+            features.TSXLDTRK = registers[3] & b_TSXLDTRK;
+            features.PCONFIG = registers[3] & b_PCONFIG;
+            features.LBR = registers[3] & b_LBR;
+            features.IBT = registers[3] & b_IBT;
+            features.AMXBF16 = registers[3] & b_AMXBF16;
+            features.AVX512FP16 = registers[3] & b_AVX512FP16;
+            features.AMXTILE = registers[3] & b_AMXTILE;
+            features.AMXINT8 = registers[3] & b_AMXINT8;
+            features.IBRRS = registers[3] & b_IBRRS;
+            features.STIBP = registers[3] & b_STIBP;
+            features.L1D_FLUSH = registers[3] & b_L1D_FLUSH;
+            features.IA32_ARCH_CAPABILITIES = registers[3] & b_IA32_ARCH_CAPABILITIES;
+            features.IA32_CORE_CAPABILITIES = registers[3] & b_IA32_CORE_CAPABILITIES;
+            features.SSBD = registers[3] & b_SSBD;
+
+            // sub-leaf 1
+            cpuid_extended(7, 1, registers);
+
+            // %eax flags
+            features.SHA512 = registers[0] & b_SHA512;
+            features.SM3 = registers[0] & b_SM3;
+            features.SM4 = registers[0] & b_SM4;
+            features.RAOINT = registers[0] & b_RAOINT;
+            features.AVXVNNI = registers[0] & b_AVXVNNI;
+            features.AVX512BF16 = registers[0] & b_AVX512BF16;
+            features.CMPCCXADD = registers[0] & b_CMPCCXADD;
+            features.FRED = registers[0] & b_FRED;
+            features.LKGS = registers[0] & b_LKGS;
+            features.WRMSRNS = registers[0] & b_WRMSRNS;
+            features.NMISRC = registers[0] & b_NMISRC;
+            features.AMXFP16 = registers[0] & b_AMXFP16;
+            features.HRESET = registers[0] & b_HRESET;
+            features.AVXIFMA = registers[0] & b_AVXIFMA;
+            features.MSRLIST = registers[0] & b_MSRLIST;
+            features.MOVRS = registers[0] & b_MOVRS;
+
+            // %ebx flags
+            features.PBNDKB = registers[1] & b_PBNDKB;
+
+            // %edx flags
+            features.AVXVNNIINT8 = registers[3] & b_AVXVNNIINT8;
+            features.AVXNECONVERT = registers[3] & b_AVXNECONVERT;
+            features.AMXCOMPLEX = registers[3] & b_AMXCOMPLEX;
+            features.AVXVNNIINT16 = registers[3] & b_AVXVNNIINT16;
+            features.PREFETCHI = registers[3] & b_PREFETCHI;
+            features.USERMSR = registers[3] & b_USERMSR;
+            features.AVX10 = registers[3] & b_AVX10;
+            features.APXF = registers[3] & b_APXF;
+        }
+
+        // Leaf 13
+        if (basic_info.highest_leaf >= 13) {
+            // sub-leaf 1
+            cpuid_extended(13, 1, registers);
+
+            // %eax flags
+            features.XSAVEOPT = registers[0] & b_XSAVEOPT;
+            features.XSAVEC = registers[0] & b_XSAVEC;
+            features.XSAVES = registers[0] & b_XSAVES;
+            features.XSAVEXFD = registers[0] & b_XSAVEXFD;
+        }
+
+        // Leaf 0x14
+        if (basic_info.highest_leaf >= 0x14) {
+            // sub-leaf 0
+            cpuid_extended(0x14, 0, registers);
+
+            // %ebx flags
+            features.PTWRITE = registers[1] & b_PTWRITE;
+        }
+
+        // Keylocker leaf (leaf 0x19)
+        if (basic_info.highest_extended_leaf >= 0x19) {
+            cpuid(0x19, registers);
+
+            // %eax flags
+            features.AESKLE = registers[0] & b_AESKLE;
+            features.WIDEKL = registers[0] & b_WIDEKL;
+        }
+
+        // AMX sub-leaf
+        if (basic_info.highest_extended_leaf >= 0x1e) {
+            // sub-leaf 1
+            cpuid_extended(0x1e, 1, registers);
+
+            // %eax flags
+            features.AMXFP8 = registers[0] & b_AMXFP8;
+            features.AMX_TRANSPOSE = registers[0] & b_AMX_TRANSPOSE;
+            features.AMX_TF32 = registers[0] & b_AMX_TF32;
+            features.AMX_AVX512 = registers[0] & b_AMX_AVX512;
+            features.AMX_MOVRS = registers[0] & b_AMX_MOVRS;
+        }
+
+        // Leaf 0x24
+        if (basic_info.highest_extended_leaf >= 0x24) {
+            cpuid_extended(0x24, 0, registers);
+
+            // %ebx flags
+            features.AVX10_256 = registers[1] & b_AVX10_256;
+            features.AVX10_512 = registers[1] & b_AVX10_512;
+        }
+
+        // Leaf 0x80000001
+        if (basic_info.highest_extended_leaf >= 0x80000001) {
+            cpuid(0x80000001, registers);
+
+            // %ecx flags
+            features.LAHF_LM = registers[2] & b_LAHF_LM;
+            features.ABM = registers[2] & b_ABM;
+            features.SSE4a = registers[2] & b_SSE4a;
+            features.PRFCHW = registers[2] & b_PRFCHW;
+            features.XOP = registers[2] & b_XOP;
+            features.LWP = registers[2] & b_LWP;
+            features.FMA4 = registers[2] & b_FMA4;
+            features.TBM = registers[2] & b_TBM;
+            features.MWAITX = registers[2] & b_MWAITX;
+
+            // %edx flags
+            features.MMXEXT = registers[3] & b_MMXEXT;
+            features.LM = registers[3] & b_LM;
+            features.x3DNOWP = registers[3] & b_3DNOWP;
+            features.x3DNOW = registers[3] & b_3DNOW;
+        }
+
+        // Leaf 0x80000008
+        if (basic_info.highest_extended_leaf >= 0x80000008) {
+            cpuid(0x80000008, registers);
+
+            // %ebx flags
+            features.CLZERO = registers[1] & b_CLZERO;
+            features.RDPRU = registers[1] & b_RDPRU;
+            features.WBNOINVD = registers[1] & b_WBNOINVD;
+        }
+
+        print_available_features(&features);
+        return 0;
     }
+    fputs("CPUID instruction failed to return any information.\n", stderr);
 
-    // Check for the CPU family, model, and stepping
-    cpuid(1, registers);
-    basic_info.family = ((registers[0] >> 8) & 0xF) + ((registers[0] >> 20) & 0xFF);
-    basic_info.model = ((registers[0] >> 4) & 0xF) + ((registers[0] >> 12) & 0xF0);
-    basic_info.stepping = registers[0] & 0xF;
-
-    print_basic_info(&basic_info);
-
-    // Check for standard feature flags (CPUID Leaf 1)
-    cpu_features features = {
-        // %ecx flags
-        .SSE3 = registers[2] & b_SSE3,
-        .PCLMULQDQ = registers[2] & b_PCLMULQDQ,
-        .DTES64 = registers[2] & b_DTES64,
-        .MONITOR = registers[2] & b_MONITOR,
-        .DSCPL = registers[2] & b_DSCPL,
-        .VMX = registers[2] & b_VMX,
-        .SMX = registers[2] & b_SMX,
-        .EIST = registers[2] & b_EIST,
-        .TM2 = registers[2] & b_TM2,
-        .SSSE3 = registers[2] & b_SSSE3,
-        .CNXTID = registers[2] & b_CNXTID,
-        .SDBG = registers[2] & b_SDBG,
-        .FMA = registers[2] & b_FMA,
-        .CMPXCHG16B = registers[2] & b_CMPXCHG16B,
-        .xTPR = registers[2] & b_xTPR,
-        .PDCM = registers[2] & b_PDCM,
-        .PCID = registers[2] & b_PCID,
-        .DCA = registers[2] & b_DCA,
-        .SSE41 = registers[2] & b_SSE41,
-        .SSE42 = registers[2] & b_SSE42,
-        .x2APIC = registers[2] & b_x2APIC,
-        .MOVBE = registers[2] & b_MOVBE,
-        .POPCNT = registers[2] & b_POPCNT,
-        .TSCDeadline = registers[2] & b_TSCDeadline,
-        .AESNI = registers[2] & b_AESNI,
-        .XSAVE = registers[2] & b_XSAVE,
-        .OSXSAVE = registers[2] & b_OSXSAVE,
-        .AVX = registers[2] & b_AVX,
-        .F16C = registers[2] & b_F16C,
-        .RDRND = registers[2] & b_RDRND,
-        .HYPRVSR = registers[2] & b_HYPRVSR,
-
-        // %edx flags
-        .FPU = registers[3] & b_FPU,
-        .VME = registers[3] & b_VME,
-        .DE = registers[3] & b_DE,
-        .PSE = registers[3] & b_PSE,
-        .TSC = registers[3] & b_TSC,
-        .MSR = registers[3] & b_MSR,
-        .PAE = registers[3] & b_PAE,
-        .MCE = registers[3] & b_MCE,
-        .CX8 = registers[3] & b_CX8,
-        .APIC = registers[3] & b_APIC,
-        .SEP = registers[3] & b_SEP,
-        .MTRR = registers[3] & b_MTRR,
-        .PGE = registers[3] & b_PGE,
-        .MCA = registers[3] & b_MCA,
-        .CMOV = registers[3] & b_CMOV,
-        .PAT = registers[3] & b_PAT,
-        .PSE36 = registers[3] & b_PSE36,
-        .PSN = registers[3] & b_PSN,
-        .CLFSH = registers[3] & b_CLFSH,
-        .DS = registers[3] & b_DS,
-        .ACPI = registers[3] & b_ACPI,
-        .MMX = registers[3] & b_MMX,
-        .FXSR = registers[3] & b_FXSR,
-        .SSE = registers[3] & b_SSE,
-        .SSE2 = registers[3] & b_SSE2,
-        .SS = registers[3] & b_SS,
-        .HTT = registers[3] & b_HTT,
-        .TM = registers[3] & b_TM,
-        .IA64 = registers[3] & b_IA64,
-        .PBE = registers[3] & b_PBE,
-    };
-
-    // Check for extended feature flags (CPUID Leaf 7)
-    if (basic_info.highest_leaf >= 7) {
-        // sub-leaf 0
-        cpuid_extended(7, 0, registers);
-
-        // %ebx flags
-        features.FSGSBASE = registers[1] & b_FSGSBASE;
-        features.SGX = registers[1] & b_SGX;
-        features.BMI = registers[1] & b_BMI;
-        features.HLE = registers[1] & b_HLE;
-        features.FDPXO = registers[1] & b_FDPXO;
-        features.AVX2 = registers[1] & b_AVX2;
-        features.SMEP = registers[1] & b_SMEP;
-        features.BMI2 = registers[1] & b_BMI2;
-        features.ENH_MOVSB = registers[1] & b_ENH_MOVSB;
-        features.INVPCID = registers[1] & b_INVPCID;
-        features.RTM = registers[1] & b_RTM;
-        features.MPX = registers[1] & b_MPX;
-        features.AVX512F = registers[1] & b_AVX512F;
-        features.AVX512DQ = registers[1] & b_AVX512DQ;
-        features.RDSEED = registers[1] & b_RDSEED;
-        features.ADX = registers[1] & b_ADX;
-        features.SMAP = registers[1] & b_SMAP;
-        features.AVX512IFMA = registers[1] & b_AVX512IFMA;
-        features.CLFLUSHOPT = registers[1] & b_CLFLUSHOPT;
-        features.CLWB = registers[1] & b_CLWB;
-        features.PT = registers[1] & b_PT;
-        features.AVX512PF = registers[1] & b_AVX512PF;
-        features.AVX512ER = registers[1] & b_AVX512ER;
-        features.AVX512CD = registers[1] & b_AVX512CD;
-        features.SHA = registers[1] & b_SHA;
-        features.AVX512BW = registers[1] & b_AVX512BW;
-        features.AVX512VL = registers[1] & b_AVX512VL;
-
-        // %ecx flags
-        features.PREFTCHWT1 = registers[2] & b_PREFTCHWT1;
-        features.AVX512VBMI = registers[2] & b_AVX512VBMI;
-        features.UMIP = registers[2] & b_UMIP;
-        features.PKU = registers[2] & b_PKU;
-        features.OSPKE = registers[2] & b_OSPKE;
-        features.WAITPKG = registers[2] & b_WAITPKG;
-        features.AVX512VBMI2 = registers[2] & b_AVX512VBMI2;
-        features.SHSTK = registers[2] & b_SHSTK;
-        features.GFNI = registers[2] & b_GFNI;
-        features.VAES = registers[2] & b_VAES;
-        features.VPCLMULQDQ = registers[2] & b_VPCLMULQDQ;
-        features.AVX512VNNI = registers[2] & b_AVX512VNNI;
-        features.AVX512BITALG = registers[2] & b_AVX512BITALG;
-        features.TMEM = registers[2] & b_TMEM;
-        features.AVX512VPOPCNTDQ = registers[2] & b_AVX512VPOPCNTDQ;
-        features.IA57 = registers[2] & b_IA57;
-        features.RDPID = registers[2] & b_RDPID;
-        features.KL = registers[2] & b_KL;
-        features.BLD = registers[2] & b_BLD;
-        features.CLDEMOTE = registers[2] & b_CLDEMOTE;
-        features.MOVDIRI = registers[2] & b_MOVDIRI;
-        features.MOVDIR64B = registers[2] & b_MOVDIR64B;
-        features.ENQCMD = registers[2] & b_ENQCMD;
-        features.SGXLC = registers[2] & b_SGXLC;
-        features.PKS = registers[2] & b_PKS;
-
-        // %edx flags
-        features.SGXKEYS = registers[3] & b_SGXKEYS;
-        features.AVX5124VNNIW = registers[3] & b_AVX5124VNNIW;
-        features.AVX5124FMAPS = registers[3] & b_AVX5124FMAPS;
-        features.FSRM = registers[3] & b_FSRM;
-        features.UINTR = registers[3] & b_UINTR;
-        features.AVX512VP2INTERSECT = registers[3] & b_AVX512VP2INTERSECT;
-        features.SRBDSCTRL = registers[3] & b_SRBDSCTRL;
-        features.MDCLEAR = registers[3] & b_MDCLEAR;
-        features.RTMAA = registers[3] & b_RTMAA;
-        features.RTMFA = registers[3] & b_RTMFA;
-        features.SERIALIZE = registers[3] & b_SERIALIZE;
-        features.HYBRID = registers[3] & b_HYBRID;
-        features.TSXLDTRK = registers[3] & b_TSXLDTRK;
-        features.PCONFIG = registers[3] & b_PCONFIG;
-        features.LBR = registers[3] & b_LBR;
-        features.IBT = registers[3] & b_IBT;
-        features.AMXBF16 = registers[3] & b_AMXBF16;
-        features.AVX512FP16 = registers[3] & b_AVX512FP16;
-        features.AMXTILE = registers[3] & b_AMXTILE;
-        features.AMXINT8 = registers[3] & b_AMXINT8;
-        features.IBRRS = registers[3] & b_IBRRS;
-        features.STIBP = registers[3] & b_STIBP;
-        features.L1D_FLUSH = registers[3] & b_L1D_FLUSH;
-        features.IA32_ARCH_CAPABILITIES = registers[3] & b_IA32_ARCH_CAPABILITIES;
-        features.IA32_CORE_CAPABILITIES = registers[3] & b_IA32_CORE_CAPABILITIES;
-        features.SSBD = registers[3] & b_SSBD;
-
-        // sub-leaf 1
-        cpuid_extended(7, 1, registers);
-
-        // %eax flags
-        features.SHA512 = registers[0] & b_SHA512;
-        features.SM3 = registers[0] & b_SM3;
-        features.SM4 = registers[0] & b_SM4;
-        features.RAOINT = registers[0] & b_RAOINT;
-        features.AVXVNNI = registers[0] & b_AVXVNNI;
-        features.AVX512BF16 = registers[0] & b_AVX512BF16;
-        features.CMPCCXADD = registers[0] & b_CMPCCXADD;
-        features.FRED = registers[0] & b_FRED;
-        features.LKGS = registers[0] & b_LKGS;
-        features.WRMSRNS = registers[0] & b_WRMSRNS;
-        features.NMISRC = registers[0] & b_NMISRC;
-        features.AMXFP16 = registers[0] & b_AMXFP16;
-        features.HRESET = registers[0] & b_HRESET;
-        features.AVXIFMA = registers[0] & b_AVXIFMA;
-        features.MSRLIST = registers[0] & b_MSRLIST;
-        features.MOVRS = registers[0] & b_MOVRS;
-
-        // %ebx flags
-        features.PBNDKB = registers[1] & b_PBNDKB;
-
-        // %edx flags
-        features.AVXVNNIINT8 = registers[3] & b_AVXVNNIINT8;
-        features.AVXNECONVERT = registers[3] & b_AVXNECONVERT;
-        features.AMXCOMPLEX = registers[3] & b_AMXCOMPLEX;
-        features.AVXVNNIINT16 = registers[3] & b_AVXVNNIINT16;
-        features.PREFETCHI = registers[3] & b_PREFETCHI;
-        features.USERMSR = registers[3] & b_USERMSR;
-        features.AVX10 = registers[3] & b_AVX10;
-        features.APXF = registers[3] & b_APXF;
-    }
-
-    // Leaf 13
-    if (basic_info.highest_leaf >= 13) {
-        // sub-leaf 1
-        cpuid_extended(13, 1, registers);
-
-        // %eax flags
-        features.XSAVEOPT = registers[0] & b_XSAVEOPT;
-        features.XSAVEC = registers[0] & b_XSAVEC;
-        features.XSAVES = registers[0] & b_XSAVES;
-        features.XSAVEXFD = registers[0] & b_XSAVEXFD;
-    }
-
-    // Leaf 0x14
-    if (basic_info.highest_leaf >= 0x14) {
-        // sub-leaf 0
-        cpuid_extended(0x14, 0, registers);
-
-        // %ebx flags
-        features.PTWRITE = registers[1] & b_PTWRITE;
-    }
-
-    // Keylocker leaf (leaf 0x19)
-    if (basic_info.highest_extended_leaf >= 0x19) {
-        cpuid(0x19, registers);
-
-        // %eax flags
-        features.AESKLE = registers[0] & b_AESKLE;
-        features.WIDEKL = registers[0] & b_WIDEKL;
-    }
-
-    // AMX sub-leaf
-    if (basic_info.highest_extended_leaf >= 0x1e) {
-        // sub-leaf 1
-        cpuid_extended(0x1e, 1, registers);
-
-        // %eax flags
-        features.AMXFP8 = registers[0] & b_AMXFP8;
-        features.AMX_TRANSPOSE = registers[0] & b_AMX_TRANSPOSE;
-        features.AMX_TF32 = registers[0] & b_AMX_TF32;
-        features.AMX_AVX512 = registers[0] & b_AMX_AVX512;
-        features.AMX_MOVRS = registers[0] & b_AMX_MOVRS;
-    }
-
-    // Leaf 0x24
-    if (basic_info.highest_extended_leaf >= 0x24) {
-        cpuid_extended(0x24, 0, registers);
-
-        // %ebx flags
-        features.AVX10_256 = registers[1] & b_AVX10_256;
-        features.AVX10_512 = registers[1] & b_AVX10_512;
-    }
-
-    // Leaf 0x80000001
-    if (basic_info.highest_extended_leaf >= 0x80000001) {
-        cpuid(0x80000001, registers);
-
-        // %ecx flags
-        features.LAHF_LM = registers[2] & b_LAHF_LM;
-        features.ABM = registers[2] & b_ABM;
-        features.SSE4a = registers[2] & b_SSE4a;
-        features.PRFCHW = registers[2] & b_PRFCHW;
-        features.XOP = registers[2] & b_XOP;
-        features.LWP = registers[2] & b_LWP;
-        features.FMA4 = registers[2] & b_FMA4;
-        features.TBM = registers[2] & b_TBM;
-        features.MWAITX = registers[2] & b_MWAITX;
-
-        // %edx flags
-        features.MMXEXT = registers[3] & b_MMXEXT;
-        features.LM = registers[3] & b_LM;
-        features.x3DNOWP = registers[3] & b_3DNOWP;
-        features.x3DNOW = registers[3] & b_3DNOW;
-    }
-
-    // Leaf 0x80000008
-    if (basic_info.highest_extended_leaf >= 0x80000008) {
-        cpuid(0x80000008, registers);
-
-        // %ebx flags
-        features.CLZERO = registers[1] & b_CLZERO;
-        features.RDPRU = registers[1] & b_RDPRU;
-        features.WBNOINVD = registers[1] & b_WBNOINVD;
-    }
-
-    print_available_features(&features);
-
-    return 0;
+    return 1;
 }
