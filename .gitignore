@@ -602,5 +602,5 @@ FodyWeavers.xsd
 *.sln.iml
 
 # Other
-*build*/
+*[Bb]uild*/
 

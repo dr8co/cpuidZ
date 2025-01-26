@@ -237,212 +237,223 @@ enum {
     b_WBNOINVD = 0x00000200,
 };
 
-typedef struct {
-    char vendor[13];
-    char brand[49];
-    uint32_t family;
-    uint32_t model;
-    uint32_t stepping;
-    uint32_t highest_leaf;
-    uint32_t highest_extended_leaf;
-} cpu_basic_info;
 
-typedef struct {
-    bool SSE3;
-    bool PCLMULQDQ;
-    bool DTES64;
-    bool MONITOR;
-    bool DSCPL;
-    bool VMX;
-    bool SMX;
-    bool EIST;
-    bool TM2;
-    bool SSSE3;
-    bool CNXTID;
-    bool SDBG;
-    bool FMA;
-    bool CMPXCHG16B;
-    bool xTPR;
-    bool PDCM;
-    bool PCID;
-    bool DCA;
-    bool SSE41;
-    bool SSE42;
-    bool x2APIC;
-    bool MOVBE;
-    bool POPCNT;
-    bool TSCDeadline;
-    bool AESNI;
-    bool XSAVE;
-    bool OSXSAVE;
-    bool AVX;
-    bool F16C;
-    bool RDRND;
-    bool HYPRVSR;
-    bool FPU;
-    bool VME;
-    bool DE;
-    bool PSE;
-    bool TSC;
-    bool MSR;
-    bool PAE;
-    bool MCE;
-    bool CX8;
-    bool APIC;
-    bool SEP;
-    bool MTRR;
-    bool PGE;
-    bool MCA;
-    bool CMOV;
-    bool PAT;
-    bool PSE36;
-    bool PSN;
-    bool CLFSH;
-    bool DS;
-    bool ACPI;
-    bool MMX;
-    bool FXSR;
-    bool SSE;
-    bool SSE2;
-    bool SS;
-    bool HTT;
-    bool TM;
-    bool IA64;
-    bool PBE;
-    bool FSGSBASE;
-    bool SGX;
-    bool BMI;
-    bool HLE;
-    bool AVX2;
-    bool FDPXO;
-    bool SMEP;
-    bool BMI2;
-    bool ENH_MOVSB;
-    bool INVPCID;
-    bool RTM;
-    bool MPX;
-    bool AVX512F;
-    bool AVX512DQ;
-    bool RDSEED;
-    bool ADX;
-    bool SMAP;
-    bool AVX512IFMA;
-    bool CLFLUSHOPT;
-    bool CLWB;
-    bool PT;
-    bool AVX512PF;
-    bool AVX512ER;
-    bool AVX512CD;
-    bool SHA;
-    bool AVX512BW;
-    bool AVX512VL;
-    bool PREFTCHWT1;
-    bool AVX512VBMI;
-    bool UMIP;
-    bool PKU;
-    bool OSPKE;
-    bool WAITPKG;
-    bool AVX512VBMI2;
-    bool SHSTK;
-    bool GFNI;
-    bool VAES;
-    bool VPCLMULQDQ;
-    bool AVX512VNNI;
-    bool AVX512BITALG;
-    bool TMEM;
-    bool AVX512VPOPCNTDQ;
-    bool IA57;
-    bool RDPID;
-    bool KL;
-    bool BLD;
-    bool CLDEMOTE;
-    bool MOVDIRI;
-    bool MOVDIR64B;
-    bool ENQCMD;
-    bool SGXLC;
-    bool PKS;
-    bool SGXKEYS;
-    bool AVX5124VNNIW;
-    bool AVX5124FMAPS;
-    bool FSRM;
-    bool UINTR;
-    bool AVX512VP2INTERSECT;
-    bool SRBDSCTRL;
-    bool MDCLEAR;
-    bool RTMAA;
-    bool RTMFA;
-    bool SERIALIZE;
-    bool HYBRID;
-    bool TSXLDTRK;
-    bool PCONFIG;
-    bool LBR;
-    bool IBT;
-    bool AMXBF16;
-    bool AVX512FP16;
-    bool AMXTILE;
-    bool AMXINT8;
-    bool IBRRS;
-    bool STIBP;
-    bool L1D_FLUSH;
-    bool IA32_ARCH_CAPABILITIES;
-    bool IA32_CORE_CAPABILITIES;
-    bool SSBD;
-    bool SHA512;
-    bool SM3;
-    bool SM4;
-    bool RAOINT;
-    bool AVXVNNI;
-    bool AVX512BF16;
-    bool CMPCCXADD;
-    bool FRED;
-    bool LKGS;
-    bool WRMSRNS;
-    bool NMISRC;
-    bool AMXFP16;
-    bool HRESET;
-    bool AVXIFMA;
-    bool MSRLIST;
-    bool MOVRS;
-    bool PBNDKB;
-    bool AVXVNNIINT8;
-    bool AVXNECONVERT;
-    bool AMXCOMPLEX;
-    bool AVXVNNIINT16;
-    bool PREFETCHI;
-    bool USERMSR;
-    bool AVX10;
-    bool APXF;
-    bool XSAVEOPT;
-    bool XSAVEC;
-    bool XSAVES;
-    bool XSAVEXFD;
-    bool PTWRITE;
-    bool AESKLE;
-    bool WIDEKL;
-    bool AMXFP8;
-    bool AMX_TRANSPOSE;
-    bool AMX_TF32;
-    bool AMX_AVX512;
-    bool AMX_MOVRS;
-    bool AVX10_256;
-    bool AVX10_512;
-    bool LAHF_LM;
-    bool ABM;
-    bool SSE4a;
-    bool PRFCHW;
-    bool XOP;
-    bool LWP;
-    bool FMA4;
-    bool TBM;
-    bool MWAITX;
-    bool MMXEXT;
-    bool LM;
-    bool x3DNOWP;
-    bool x3DNOW;
-    bool CLZERO;
-    bool RDPRU;
-    bool WBNOINVD;
-} cpu_features;
+/**
+ * @brief Structure to hold basic CPU information.
+ */
+struct cpu_basic_info {
+    char vendor[13]; /**< Vendor name */
+    char brand[49]; /**< Brand name */
+    uint32_t family; /**< Family */
+    uint32_t model; /**< Model */
+    uint32_t stepping; /**< Stepping ID */
+    uint32_t highest_leaf; /**< Highest leaf */
+    uint32_t highest_extended_leaf; /**< Highest extended leaf */
+};
+
+typedef struct cpu_basic_info cpu_basic_info;
+
+/**
+* @brief Structure to hold CPU features.
+*/
+struct cpu_features {
+    bool SSE3; /**< Prescott New Instructions - PNI */
+    bool PCLMULQDQ; /**< carry-less multiply */
+    bool DTES64; /**< 64-bit debug store */
+    bool MONITOR; /**< MONITOR and MWAIT instructions (PNI) */
+    bool DSCPL; /**< CPL qualified debug store */
+    bool VMX; /**< Virtual Machine eXtensions */
+    bool SMX; /**< Safer Mode Extensions (LaGrande) (GETSEC instruction) */
+    bool EIST; /**< Enhanced SpeedStep */
+    bool TM2; /**< Thermal Monitor 2 */
+    bool SSSE3; /**< Supplemental SSE3 instructions */
+    bool CNXTID; /**< L1 Context ID */
+    bool SDBG; /**< Silicon Debug Interface */
+    bool FMA; /**< Fused multiply-add (FMA3) */
+    bool CMPXCHG16B; /**< CMPXCHG16B instruction */
+    bool xTPR; /**< Can disable sending task priority messages */
+    bool PDCM; /**< Perfmon & debug capability */
+    bool PCID; /**< Process context identifiers */
+    bool DCA; /**< Direct cache access for DMA writes */
+    bool SSE41; /**< SSE4.1 instructions */
+    bool SSE42; /**< SSE4.2 instructions */
+    bool x2APIC; /**< enhanced APIC */
+    bool MOVBE; /**< MOVBE instruction (big-endian) */
+    bool POPCNT; /**< POPCNT instruction */
+    bool TSCDeadline; /**< APIC implements one-shot operation using a TSC deadline value */
+    bool AESNI; /**< AES instruction set */
+    bool XSAVE; /**< Extensible processor state save/restore: XSAVE, XRSTOR, XSETBV, XGETBV instructions */
+    bool OSXSAVE; /**< XSAVE enabled by OS */
+    bool AVX; /**< Advanced Vector Extensions (256-bit SIMD) */
+    bool F16C; /**< Floating-point conversion instructions to/from FP16 format */
+    bool RDRND; /**< on-chip random number generator */
+    bool HYPRVSR; /**< Hypervisor present */
+    bool FPU; /**< Onboard x87 FPU */
+    bool VME; /**< Virtual 8086 mode extensions (such as VIF, VIP, PVI) */
+    bool DE; /**< Debugging extensions (CR4 bit 3) */
+    bool PSE; /**< Page Size Extension (4 MB pages) */
+    bool TSC; /**< Time Stamp Counter and RDTSC instruction */
+    bool MSR; /**< Model-specific registers and RDMSR/WRMSR instructions */
+    bool PAE; /**< Physical Address Extension */
+    bool MCE; /**< Machine Check Exception */
+    bool CX8; /**< CMPXCHG8B (compare-and-swap) instruction */
+    bool APIC; /**< Onboard Advanced Programmable Interrupt Controller */
+    bool SEP; /**< SYSENTER and SYSEXIT fast system call instructions */
+    bool MTRR; /**< Memory Type Range Registers */
+    bool PGE; /**< Page Global Enable bit in CR4 */
+    bool MCA; /**< Machine check architecture */
+    bool CMOV; /**< Conditional move: CMOV, FCMOV and FCOMI instructions */
+    bool PAT; /**< Page Attribute Table */
+    bool PSE36; /**< 36-bit page size extension */
+    bool PSN; /**< Processor Serial Number supported and enabled */
+    bool CLFSH; /**< CLFLUSH cache line flush instruction (SSE2) */
+    bool DS; /**< Debug store: save trace of executed jumps */
+    bool ACPI; /**< Onboard thermal control MSRs for ACPI */
+    bool MMX; /**< MMX instructions (64-bit SIMD) */
+    bool FXSR; /**< FXSAVE, FXRSTOR instructions, CR4 bit 9 */
+    bool SSE; /**< Streaming SIMD Extensions instructions (128-bit SIMD) */
+    bool SSE2; /**< SSE2 instructions */
+    bool SS; /**< CPU cache implements self-snoop */
+    bool HTT; /**< Max APIC IDs reserved field is Valid */
+    bool TM; /**< Thermal monitor automatically limits temperature */
+    bool IA64; /**< IA64 processor emulating x86 */
+    bool PBE; /**< Pending Break Enable (PBE# pin) wakeup capability */
+    bool FSGSBASE; /**< Access to base of %fs and %gs */
+    bool SGX; /**< Software Guard Extensions */
+    bool BMI; /**< Bit Manipulation Instruction Set 1 */
+    bool HLE; /**< TSX Hardware Lock Elision */
+    bool AVX2; /**< Advanced Vector Extensions 2 */
+    bool FDPXO; /**< x87 FPU data pointer register updated on exceptions only */
+    bool SMEP; /**< Supervisor Mode Execution Prevention */
+    bool BMI2; /**< Bit Manipulation Instruction Set 2 */
+    bool ENH_MOVSB; /**< Enhanced REP MOVSB/STOSB */
+    bool INVPCID; /**< INVPCID instruction */
+    bool RTM; /**< TSX Restricted Transactional Memory */
+    bool MPX; /**< Intel MPX (Memory Protection Extensions) */
+    bool AVX512F; /**< AVX-512 Foundation */
+    bool AVX512DQ; /**< AVX-512 Doubleword and Quadword Instructions */
+    bool RDSEED; /**< RDSEED instruction */
+    bool ADX; /**< Intel ADX (Multi-Precision Add-Carry Instruction Extensions) */
+    bool SMAP; /**< Supervisor Mode Access Prevention */
+    bool AVX512IFMA; /**< AVX-512 Integer Fused Multiply-Add Instructions */
+    bool CLFLUSHOPT; /**< CLFLUSHOPT instruction */
+    bool CLWB; /**< Cache line writeback instruction */
+    bool PT; /**< Intel Processor Trace */
+    bool AVX512PF; /**< AVX-512 Prefetch Instructions */
+    bool AVX512ER; /**< AVX-512 Exponential and Reciprocal Instructions */
+    bool AVX512CD; /**< AVX-512 Conflict Detection Instructions */
+    bool SHA; /**< SHA-1 and SHA-256 extensions */
+    bool AVX512BW; /**< AVX-512 Byte and Word Instructions */
+    bool AVX512VL; /**< AVX-512 Vector Length Extensions */
+    bool PREFTCHWT1; /**< PREFETCHWT1 instruction */
+    bool AVX512VBMI; /**< AVX-512 Vector Bit Manipulation Instructions */
+    bool UMIP; /**< User-Mode Instruction Prevention */
+    bool PKU; /**< Memory Protection Keys for User-mode pages */
+    bool OSPKE; /**< PKU enabled by OS */
+    bool WAITPKG; /**< Timed pause and user-level monitor/wait instructions (TPAUSE, UMONITOR, UMWAIT) */
+    bool AVX512VBMI2; /**< AVX-512 Vector Bit Manipulation Instructions 2 */
+    bool SHSTK; /**< Control flow enforcement (CET): shadow stack */
+    bool GFNI; /**< Galois Field instructions */
+    bool VAES; /**< Vector AES instruction set (VEX-256/EVEX) */
+    bool VPCLMULQDQ; /**< CLMUL instruction set (VEX-256/EVEX) */
+    bool AVX512VNNI; /**< AVX-512 Vector Neural Network Instructions */
+    bool AVX512BITALG; /**< AVX-512 BITALG instructions */
+    bool TMEM; /**< Total Memory Encryption MSRs available */
+    bool AVX512VPOPCNTDQ; /**< AVX-512 Vector Population Count Double and Quad-word */
+    bool IA57; /**< 5-level paging (57 address bits) */
+    bool RDPID; /**< Read Processor ID instruction and IA32_TSC_AUX MSR */
+    bool KL; /**< AES Key Locker */
+    bool BLD; /**< Bus lock debug exceptions */
+    bool CLDEMOTE; /**< Cache line demote instruction */
+    bool MOVDIRI; /**< MOVDIRI instruction */
+    bool MOVDIR64B; /**< MOVDIR64B (64-byte direct store) instruction */
+    bool ENQCMD; /**< Enqueue Stores and EMQCMD/EMQCMDS instructions */
+    bool SGXLC; /**< SGX Launch Configuration */
+    bool PKS; /**< Protection Keys for supervisor-mode pages */
+    bool SGXKEYS; /**< Attestation Services for Intel SGX */
+    bool AVX5124VNNIW; /**< AVX-512 4-register Neural Network Instructions */
+    bool AVX5124FMAPS; /**< AVX-512 4-register Multiply Accumulation Single precision */
+    bool FSRM; /**< Fast Short REP MOV */
+    bool UINTR; /**< User Inter-processor Interrupts */
+    bool AVX512VP2INTERSECT; /**< AVX-512 vector intersection instructions on 32/64-bit integers */
+    bool SRBDSCTRL; /**< Special Register Buffer Data Sampling Mitigations */
+    bool MDCLEAR; /**< VERW instruction clears CPU buffers */
+    bool RTMAA; /**< rtm-always-abort: All TSX transactions are aborted */
+    bool RTMFA; /**< rtm-force-abort: TSX_FORCE_ABORT */
+    bool SERIALIZE; /**< SERIALIZE instruction */
+    bool HYBRID; /**< Hybrid processor topology */
+    bool TSXLDTRK; /**< TSX load address tracking suspend/resume instructions */
+    bool PCONFIG; /**< Platform Configuration */
+    bool LBR; /**< Architectural Last Branch Record */
+    bool IBT; /**< Indirect Branch Tracking */
+    bool AMXBF16; /**< AMX BF16 instructions */
+    bool AVX512FP16; /**< AVX-512 FP16 instructions */
+    bool AMXTILE; /**< AMX Tile instructions */
+    bool AMXINT8; /**< AMX Int8 instructions */
+    bool IBRRS; /**< Indirect Branch Restricted Speculation */
+    bool STIBP; /**< Single Thread Indirect Branch Predictors */
+    bool L1D_FLUSH; /**< IA32_FLUSH_CMD MSR */
+    bool IA32_ARCH_CAPABILITIES; /**< IA32_ARCH_CAPABILITIES MSR */
+    bool IA32_CORE_CAPABILITIES; /**< IA32_CORE_CAPABILITIES MSR */
+    bool SSBD; /**< Speculative Store Bypass Disable */
+    bool SHA512; /**< SHA-512 instructions */
+    bool SM3; /**< SM3 hash extensions */
+    bool SM4; /**< SM4  cipher extensions */
+    bool RAOINT; /**< Remote Atomic Operations on integers */
+    bool AVXVNNI; /**< AVX Vector Neural Network Instructions */
+    bool AVX512BF16; /**< AVX-512 BF16 instructions */
+    bool CMPCCXADD; /**< CMPccXADD instructions */
+    bool FRED; /**< Flexible Return and Event Delivery */
+    bool LKGS; /**< LKGS Instruction */
+    bool WRMSRNS; /**< WRMSRNS instruction */
+    bool NMISRC; /**< NMI source */
+    bool AMXFP16; /**< AMX FP16 instructions */
+    bool HRESET; /**< HRESET instruction */
+    bool AVXIFMA; /**< AVX Integer Fused Multiply-Add instructions */
+    bool MSRLIST; /**< RDMSRLIST and WRMSRLIST instructions */
+    bool MOVRS; /**< MOVRS and PREFETCHRST2 instructions */
+    bool PBNDKB; /**< Total Storage Encryption: PBNDKB instruction and TSE_CAPABILITY MSR */
+    bool AVXVNNIINT8; /**< AVX Vector Neural Network Instructions with INT8 data */
+    bool AVXNECONVERT; /**< AVX no-exception FP conversion instructions */
+    bool AMXCOMPLEX; /**< AMX support for 'complex' tiles */
+    bool AVXVNNIINT16; /**< AVX Vector Neural Network Instructions with INT16 data */
+    bool PREFETCHI; /**< Instruction-cache prefetch instructions (PREFETCHIT0 and PREFETCHIT1) */
+    bool USERMSR; /**< User-mode MSR access instructions */
+    bool AVX10; /**< AVX10 Converged Vector ISA */
+    bool APXF; /**< Advanced Performance Extensions, Foundation */
+    bool XSAVEOPT; /**< XSAVEOPT instruction */
+    bool XSAVEC; /**< XSAVEC instruction */
+    bool XSAVES; /**< XSAVES/XRSTORS instructions */
+    bool XSAVEXFD; /**< XFD (Extended Feature Disable) support */
+    bool PTWRITE; /**< PTWRITE instruction */
+    bool AESKLE; /**< AES 'Key Locker' instructions */
+    bool WIDEKL; /**< AES 'Wide Key Locker' instructions */
+    bool AMXFP8; /**< AMX float8 support */
+    bool AMX_TRANSPOSE; /**< AMX Transposition instruction support */
+    bool AMX_TF32; /**< AMX tf32/fp19 support */
+    bool AMX_AVX512; /**< AMX-AVX512 support */
+    bool AMX_MOVRS; /**< AMX-MOVRS instruction */
+    bool AVX10_256; /**< AVX10 256-bit Converged Vector ISA */
+    bool AVX10_512; /**< AVX10 512-bit Converged Vector ISA */
+    bool LAHF_LM; /**< LAHF/SAHF in long mode */
+    bool ABM; /**< Advanced Bit Manipulation (LZCNT and POPCNT) */
+    bool SSE4a; /**< SSE4a instructions */
+    bool PRFCHW; /**< PREFETCH and PREFETCHW instructions */
+    bool XOP; /**< XOP instruction set */
+    bool LWP; /**< Light Weight Profiling */
+    bool FMA4; /**< 4-operand fused multiply-add instructions */
+    bool TBM; /**< Trailing Bit Manipulation */
+    bool MWAITX; /**< MWAITX and MONITORX instructions */
+    bool MMXEXT; /**< Extended MMX */
+    bool LM; /**< Long mode (64-bit support) */
+    bool x3DNOWP; /**< Extended 3DNow! */
+    bool x3DNOW; /**< 3DNow! */
+    bool CLZERO; /**< CLZERO instruction */
+    bool RDPRU; /**< RDPRU instruction */
+    bool WBNOINVD; /**< WBNOINVD instruction */
+};
+
+typedef struct cpu_features cpu_features;
 
 // Function to execute the CPUID instruction
 void cpuid(uint32_t leaf, uint32_t registers[4]) {
@@ -500,12 +511,12 @@ extern int check_cpuid();
 void print_basic_info(const cpu_basic_info* const feat) {
     puts("Basic CPU Information:");
     if (feat->vendor[0] != '\0') printf("\tVendor: %s\n", feat->vendor);
-    if (feat->brand[0] != '\0') printf("\tBrand: %s\n", feat->brand);
-    if (feat->family) printf("\tFamily: %d\n", feat->family);
-    if (feat->model) printf("\tModel: %d\n", feat->model);
-    if (feat->stepping) printf("\tStepping id: %d\n", feat->stepping);
-    if (feat->highest_leaf) printf("\tHighest leaf: 0x%x\n", feat->highest_leaf);
-    if (feat->highest_extended_leaf) printf("\tHighest extended leaf: 0x%x\n", feat->highest_extended_leaf);
+    if (feat->brand[0] != '\0') printf("\tBrand : %s\n", feat->brand);
+    if (feat->family) printf("\tFamily: 0x%x (%u)\n", feat->family, feat->family);
+    if (feat->model) printf("\tModel : 0x%x (%u)\n", feat->model, feat->model);
+    if (feat->stepping) printf("\tStepping id: 0x%x (%u)\n",feat->stepping, feat->stepping);
+    if (feat->highest_leaf) printf("\tHighest leaf: 0x%x (%u)\n", feat->highest_leaf, feat->highest_leaf);
+    if (feat->highest_extended_leaf) printf("\tHighest extended leaf: 0x%x (%u)\n", feat->highest_extended_leaf, feat->highest_extended_leaf);
 }
 
 void print_available_features(const cpu_features* feats) {
@@ -531,7 +542,7 @@ void print_available_features(const cpu_features* feats) {
         "DE: Debugging extensions (CR4 bit 3)", "PSE: Page Size Extension (4 MB pages)",
         "TSC: Time Stamp Counter and RDTSC instruction", "MSR: 	Model-specific registers and RDMSR/WRMSR instructions",
         "PAE: 	Physical Address Extension", "MCE: Machine Check Exception",
-        "CX8: CMPXCHG8B (compare-and-swap) instruction", "APIC:Onboard Advanced Programmable Interrupt Controller",
+        "CX8: CMPXCHG8B (compare-and-swap) instruction", "APIC: Onboard Advanced Programmable Interrupt Controller",
         "SEP: SYSENTER and SYSEXIT fast system call instructions", "MTRR: Memory Type Range Registers",
         "PGE: Page Global Enable bit in CR4", "MCA: Machine check architecture",
         "CMOV:Conditional move: CMOV, FCMOV and FCOMI instructions", "PAT: Page Attribute Table",
@@ -598,11 +609,11 @@ void print_available_features(const cpu_features* feats) {
         "WRMSRNS: WRMSRNS instruction (non-serializing write to MSRs)", "NMISRC: NMI source reporting",
         "AMXFP16: AMX instructions for FP16 numbers",
         "HRESET: HRESET instruction, IA32_HRESET_ENABLE (17DAh) MSR, and Processor History Reset Leaf (EAX=20h)",
-        "AVXIFMA: AVX IFMA instructions",
+        "AVXIFMA: AVX Integer Fused Multiply-Add instructions",
         "MSRLIST: RDMSRLIST and WRMSRLIST instructions, and the IA32_BARRIER (02Fh) MSR",
         "MOVRS: MOVRS and PREFETCHRST2 instructions supported (memory read/prefetch with read-shared hint)",
         "PBNDKB: Total Storage Encryption: PBNDKB instruction and TSE_CAPABILITY (9F1h) MSR.",
-        "AVXVNNIINT8: AVX VNNI INT8 instructions",
+        "AVXVNNIINT8: AVX Vector Neural Network Instructions with INT8 data",
         "AVXNECONVERT: AVX no-exception FP conversion instructions (bfloat16↔FP32 and FP16→FP32)",
         "AMXCOMPLEX: AMX support for \"complex\" tiles (TCMMIMFP16PS and TCMMRLFP16PS)",
         "AVXVNNIINT16: AVX VNNI INT16 instructions",
