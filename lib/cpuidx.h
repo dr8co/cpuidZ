@@ -4,10 +4,41 @@
 
 #if defined(__cplusplus) && __cplusplus
 extern "C" {
-#endif
+#define CPUIDX_LANG_CPP 1
+#define CPUIDX_CONSTEXPR_AVAILABLE 1
+#define CPUIDX_BOOL_AVAILABLE 1
+#endif // defined(__cplusplus) && __cplusplus
+
+// C23 support for constexpr & bool.
+// The full C23 standard should be 202311L, but GCC has constexpr & bool at 202000L
+#if __STDC_VERSION__ >= 202000L
+#ifdef __clang__
+#if __clang_major__ >= 18
+#ifndef CPUIDX_BOOL_AVAILABLE
+#define CPUIDX_BOOL_AVAILABLE 1
+#endif // CPUIDX_BOOL_AVAILABLE
+#endif // __clang_major__ >= 18
+#if __clang_major__ >= 19 // C constexpr is supported on Clang 19+
+#ifndef CPUIDX_CONSTEXPR_AVAILABLE
+#define CPUIDX_CONSTEXPR_AVAILABLE 1
+#endif // !CPUIDX_CONSTEXPR_AVAILABLE
+#endif // __clang_major__ >= 19
+#elif defined(__GNUC__) // __clang__
+#if __GNUC__ >= 13
+#ifndef CPUIDX_CONSTEXPR_AVAILABLE
+#define CPUIDX_CONSTEXPR_AVAILABLE 1
+#endif // !CPUIDX_CONSTEXPR_AVAILABLE
+#ifndef CPUIDX_BOOL_AVAILABLE
+#define CPUIDX_BOOL_AVAILABLE 1
+#endif // !CPUIDX_BOOL_AVAILABLE
+#endif // __GNUC__ >= 13
+#endif // defined(__GNUC__)
+#endif // __STDC_VERSION__ >= 202000L
 
 #include <stdint.h>
+#ifndef CPUIDX_BOOL_AVAILABLE
 #include <stdbool.h>
+#endif
 
 /**
 * @brief Structure to hold basic CPU information.
@@ -221,6 +252,235 @@ struct cpu_features {
     bool RDPRU; /**< RDPRU instruction */
     bool WBNOINVD; /**< WBNOINVD instruction */
 };
+
+#ifdef CPUIDX_CONSTEXPR_AVAILABLE
+// Features in ecx for CPUID leaf 1
+constexpr uint32_t b_SSE3 = 0x00000001;
+constexpr uint32_t b_PCLMULQDQ = 0x00000002;
+constexpr uint32_t b_DTES64 = 0x00000004;
+constexpr uint32_t b_MONITOR = 0x00000008;
+constexpr uint32_t b_DSCPL = 0x00000010;
+constexpr uint32_t b_VMX = 0x00000020;
+constexpr uint32_t b_SMX = 0x00000040;
+constexpr uint32_t b_EIST = 0x00000080;
+constexpr uint32_t b_TM2 = 0x00000100;
+constexpr uint32_t b_SSSE3 = 0x00000200;
+constexpr uint32_t b_CNXTID = 0x00000400;
+constexpr uint32_t b_SDBG = 0x00000800;
+constexpr uint32_t b_FMA = 0x00001000;
+constexpr uint32_t b_CMPXCHG16B = 0x00002000;
+constexpr uint32_t b_xTPR = 0x00004000;
+constexpr uint32_t b_PDCM = 0x00008000;
+constexpr uint32_t b_PCID = 0x00020000;
+constexpr uint32_t b_DCA = 0x00040000;
+constexpr uint32_t b_SSE41 = 0x00080000;
+constexpr uint32_t b_SSE42 = 0x00100000;
+constexpr uint32_t b_x2APIC = 0x00200000;
+constexpr uint32_t b_MOVBE = 0x00400000;
+constexpr uint32_t b_POPCNT = 0x00800000;
+constexpr uint32_t b_TSCDeadline = 0x01000000;
+constexpr uint32_t b_AESNI = 0x02000000;
+constexpr uint32_t b_XSAVE = 0x04000000;
+constexpr uint32_t b_OSXSAVE = 0x08000000;
+constexpr uint32_t b_AVX = 0x10000000;
+constexpr uint32_t b_F16C = 0x20000000;
+constexpr uint32_t b_RDRND = 0x40000000;
+constexpr uint32_t b_HYPRVSR = 0x80000000;
+
+// Features in edx for leaf 1
+constexpr uint32_t b_FPU = 0x00000001;
+constexpr uint32_t b_VME = 0x00000002;
+constexpr uint32_t b_DE = 0x00000004;
+constexpr uint32_t b_PSE = 0x00000008;
+constexpr uint32_t b_TSC = 0x00000010;
+constexpr uint32_t b_MSR = 0x00000020;
+constexpr uint32_t b_PAE = 0x00000040;
+constexpr uint32_t b_MCE = 0x00000080;
+constexpr uint32_t b_CX8 = 0x00000100;
+constexpr uint32_t b_APIC = 0x00000200;
+constexpr uint32_t b_SEP = 0x00000800;
+constexpr uint32_t b_MTRR = 0x00001000;
+constexpr uint32_t b_PGE = 0x00002000;
+constexpr uint32_t b_MCA = 0x00004000;
+constexpr uint32_t b_CMOV = 0x00008000;
+constexpr uint32_t b_PAT = 0x00010000;
+constexpr uint32_t b_PSE36 = 0x00020000;
+constexpr uint32_t b_PSN = 0x00040000;
+constexpr uint32_t b_CLFSH = 0x00080000;
+constexpr uint32_t b_DS = 0x00200000;
+constexpr uint32_t b_ACPI = 0x00400000;
+constexpr uint32_t b_MMX = 0x00800000;
+constexpr uint32_t b_FXSR = 0x01000000;
+constexpr uint32_t b_SSE = 0x02000000;
+constexpr uint32_t b_SSE2 = 0x04000000;
+constexpr uint32_t b_SS = 0x08000000;
+constexpr uint32_t b_HTT = 0x10000000;
+constexpr uint32_t b_TM = 0x20000000;
+constexpr uint32_t b_IA64 = 0x40000000;
+constexpr uint32_t b_PBE = 0x80000000;
+
+// Features in ebx for leaf 7 sub-leaf 0
+constexpr uint32_t b_FSGSBASE = 0x00000001;
+constexpr uint32_t b_SGX = 0x00000004;
+constexpr uint32_t b_BMI = 0x00000008;
+constexpr uint32_t b_HLE = 0x00000010;
+constexpr uint32_t b_AVX2 = 0x00000020;
+constexpr uint32_t b_FDPXO = 0x00000040;
+constexpr uint32_t b_SMEP = 0x00000080;
+constexpr uint32_t b_BMI2 = 0x00000100;
+constexpr uint32_t b_ENH_MOVSB = 0x00000200;
+constexpr uint32_t b_INVPCID = 0x00000400;
+constexpr uint32_t b_RTM = 0x00000800;
+constexpr uint32_t b_MPX = 0x00004000;
+constexpr uint32_t b_AVX512F = 0x00010000;
+constexpr uint32_t b_AVX512DQ = 0x00020000;
+constexpr uint32_t b_RDSEED = 0x00040000;
+constexpr uint32_t b_ADX = 0x00080000;
+constexpr uint32_t b_SMAP = 0x00100000;
+constexpr uint32_t b_AVX512IFMA = 0x00200000;
+constexpr uint32_t b_CLFLUSHOPT = 0x00800000;
+constexpr uint32_t b_CLWB = 0x01000000;
+constexpr uint32_t b_PT = 0x02000000;
+constexpr uint32_t b_AVX512PF = 0x04000000;
+constexpr uint32_t b_AVX512ER = 0x08000000;
+constexpr uint32_t b_AVX512CD = 0x10000000;
+constexpr uint32_t b_SHA = 0x20000000;
+constexpr uint32_t b_AVX512BW = 0x40000000;
+constexpr uint32_t b_AVX512VL = 0x80000000;
+
+// Features in ecx for leaf 7 sub-leaf 0
+constexpr uint32_t b_PREFTCHWT1 = 0x00000001;
+constexpr uint32_t b_AVX512VBMI = 0x00000002;
+constexpr uint32_t b_UMIP = 0x00000004;
+constexpr uint32_t b_PKU = 0x00000008;
+constexpr uint32_t b_OSPKE = 0x00000010;
+constexpr uint32_t b_WAITPKG = 0x00000020;
+constexpr uint32_t b_AVX512VBMI2 = 0x00000040;
+constexpr uint32_t b_SHSTK = 0x00000080;
+constexpr uint32_t b_GFNI = 0x00000100;
+constexpr uint32_t b_VAES = 0x00000200;
+constexpr uint32_t b_VPCLMULQDQ = 0x00000400;
+constexpr uint32_t b_AVX512VNNI = 0x00000800;
+constexpr uint32_t b_AVX512BITALG = 0x00001000;
+constexpr uint32_t b_TMEM = 0x00002000;
+constexpr uint32_t b_AVX512VPOPCNTDQ = 0x00004000;
+constexpr uint32_t b_IA57 = 0x00010000;
+constexpr uint32_t b_RDPID = 0x00400000;
+constexpr uint32_t b_KL = 0x00800000;
+constexpr uint32_t b_BLD = 0x01000000;
+constexpr uint32_t b_CLDEMOTE = 0x02000000;
+constexpr uint32_t b_MOVDIRI = 0x08000000;
+constexpr uint32_t b_MOVDIR64B = 0x10000000;
+constexpr uint32_t b_ENQCMD = 0x20000000;
+constexpr uint32_t b_SGXLC = 0x40000000;
+constexpr uint32_t b_PKS = 0x80000000;
+
+// Features in edx for leaf 7 sub-leaf 0
+constexpr uint32_t b_SGXKEYS = 0x00000002;
+constexpr uint32_t b_AVX5124VNNIW = 0x00000004;
+constexpr uint32_t b_AVX5124FMAPS = 0x00000008;
+constexpr uint32_t b_FSRM = 0x00000010;
+constexpr uint32_t b_UINTR = 0x00000020;
+constexpr uint32_t b_AVX512VP2INTERSECT = 0x00000100;
+constexpr uint32_t b_SRBDSCTRL = 0x00000200;
+constexpr uint32_t b_MDCLEAR = 0x00000400;
+constexpr uint32_t b_RTMAA = 0x00000800;
+constexpr uint32_t b_RTMFA = 0x00002000;
+constexpr uint32_t b_SERIALIZE = 0x00004000;
+constexpr uint32_t b_HYBRID = 0x00008000;
+constexpr uint32_t b_TSXLDTRK = 0x00010000;
+constexpr uint32_t b_PCONFIG = 0x00040000;
+constexpr uint32_t b_LBR = 0x00080000;
+constexpr uint32_t b_IBT = 0x00100000;
+constexpr uint32_t b_AMXBF16 = 0x00400000;
+constexpr uint32_t b_AVX512FP16 = 0x00800000;
+constexpr uint32_t b_AMXTILE = 0x01000000;
+constexpr uint32_t b_AMXINT8 = 0x02000000;
+constexpr uint32_t b_IBRRS = 0x04000000;
+constexpr uint32_t b_STIBP = 0x08000000;
+constexpr uint32_t b_L1D_FLUSH = 0x10000000;
+constexpr uint32_t b_IA32_ARCH_CAPABILITIES = 0x20000000;
+constexpr uint32_t b_IA32_CORE_CAPABILITIES = 0x40000000;
+constexpr uint32_t b_SSBD = 0x80000000;
+
+// Features in eax for leaf 7 sub-leaf 1
+constexpr uint32_t b_SHA512 = 0x00000001;
+constexpr uint32_t b_SM3 = 0x00000002;
+constexpr uint32_t b_SM4 = 0x00000004;
+constexpr uint32_t b_RAOINT = 0x00000008;
+constexpr uint32_t b_AVXVNNI = 0x00000010;
+constexpr uint32_t b_AVX512BF16 = 0x00000020;
+constexpr uint32_t b_CMPCCXADD = 0x00000080;
+constexpr uint32_t b_FRED = 0x00020000;
+constexpr uint32_t b_LKGS = 0x00040000;
+constexpr uint32_t b_WRMSRNS = 0x00080000;
+constexpr uint32_t b_NMISRC = 0x00100000;
+constexpr uint32_t b_AMXFP16 = 0x00200000;
+constexpr uint32_t b_HRESET = 0x00400000;
+constexpr uint32_t b_AVXIFMA = 0x00800000;
+constexpr uint32_t b_MSRLIST = 0x08000000;
+constexpr uint32_t b_MOVRS = 0x80000000;
+
+// Features in ebx for leaf 7 sub-leaf 1
+constexpr uint32_t b_PBNDKB = 0x00000002;
+
+// Features in edx for leaf 7 sub-leaf 1
+constexpr uint32_t b_AVXVNNIINT8 = 0x00000010;
+constexpr uint32_t b_AVXNECONVERT = 0x00000020;
+constexpr uint32_t b_AMXCOMPLEX = 0x00000100;
+constexpr uint32_t b_AVXVNNIINT16 = 0x00000400;
+constexpr uint32_t b_PREFETCHI = 0x00004000;
+constexpr uint32_t b_USERMSR = 0x00008000;
+constexpr uint32_t b_AVX10 = 0x00080000;
+constexpr uint32_t b_APXF = 0x00200000;
+
+// Features in eax for leaf 13 sub-leaf 1
+constexpr uint32_t b_XSAVEOPT = 0x00000001;
+constexpr uint32_t b_XSAVEC = 0x00000002;
+constexpr uint32_t b_XSAVES = 0x00000008;
+constexpr uint32_t b_XSAVEXFD = 0x00000010;
+
+// Features in ebx for leaf 0x14 sub-leaf 0
+constexpr uint32_t b_PTWRITE = 0x00000010;
+
+// Keylocker leaf (%eax == 0x19)
+constexpr uint32_t b_AESKLE = 0x00000001;
+constexpr uint32_t b_WIDEKL = 0x00000004;
+
+// Features in %eax for AMX sub-leaf (%eax == 0x1e, %ecx == 1)
+constexpr uint32_t b_AMXFP8 = 0x00000010;
+constexpr uint32_t b_AMX_TRANSPOSE = 0x00000020;
+constexpr uint32_t b_AMX_TF32 = 0x00000040;
+constexpr uint32_t b_AMX_AVX512 = 0x00000080;
+constexpr uint32_t b_AMX_MOVRS = 0x00000100;
+
+// Features in ebx for leaf 0x24
+constexpr uint32_t b_AVX10_256 = 0x00020000;
+constexpr uint32_t b_AVX10_512 = 0x00040000;
+
+// Features in ecx for leaf 0x80000001
+constexpr uint32_t b_LAHF_LM = 0x00000001;
+constexpr uint32_t b_ABM = 0x00000020;
+constexpr uint32_t b_SSE4a = 0x00000040;
+constexpr uint32_t b_PRFCHW = 0x00000100;
+constexpr uint32_t b_XOP = 0x00000800;
+constexpr uint32_t b_LWP = 0x00008000;
+constexpr uint32_t b_FMA4 = 0x00010000;
+constexpr uint32_t b_TBM = 0x00200000;
+constexpr uint32_t b_MWAITX = 0x20000000;
+
+// Features in edx for leaf 0x80000001
+constexpr uint32_t b_MMXEXT = 0x00400000;
+constexpr uint32_t b_LM = 0x20000000;
+constexpr uint32_t b_3DNOWP = 0x40000000;
+constexpr uint32_t b_3DNOW = 0x80000000;
+
+// Features in ebx for leaf 0x80000008
+constexpr uint32_t b_CLZERO = 0x00000001;
+constexpr uint32_t b_RDPRU = 0x00000010;
+constexpr uint32_t b_WBNOINVD = 0x00000200;
+
+#else
 
 enum {
     // Features in ecx for CPUID leaf 1
@@ -449,6 +709,7 @@ enum {
     b_RDPRU = 0x00000010,
     b_WBNOINVD = 0x00000200,
 };
+#endif
 
 typedef struct cpu_basic_info cpu_basic_info;
 typedef struct cpu_features cpu_features;
@@ -461,7 +722,7 @@ void cpuid_extended(uint32_t leaf, uint32_t sub_leaf, uint32_t registers[4]);
 
 int get_cpu_features(cpu_features* features, cpu_basic_info* basic_info);
 
-#if defined(__cplusplus) && __cplusplus
+#ifdef CPUIDX_LANG_CPP
 }
 #endif
 

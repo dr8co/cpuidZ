@@ -1,7 +1,9 @@
 #include <cpuidx.h>
 #include <stdio.h>
-#include <string.h>
+
+#ifndef CPUIDX_BOOL_AVAILABLE
 #include <stdbool.h>
+#endif
 
 void print_basic_info(const cpu_basic_info* const feat) {
     puts("Basic CPU Information:");
@@ -9,9 +11,10 @@ void print_basic_info(const cpu_basic_info* const feat) {
     if (feat->brand[0] != '\0') printf("\tBrand : %s\n", feat->brand);
     if (feat->family) printf("\tFamily: 0x%x (%u)\n", feat->family, feat->family);
     if (feat->model) printf("\tModel : 0x%x (%u)\n", feat->model, feat->model);
-    if (feat->stepping) printf("\tStepping id: 0x%x (%u)\n",feat->stepping, feat->stepping);
+    if (feat->stepping) printf("\tStepping id: 0x%x (%u)\n", feat->stepping, feat->stepping);
     if (feat->highest_leaf) printf("\tHighest leaf: 0x%x (%u)\n", feat->highest_leaf, feat->highest_leaf);
-    if (feat->highest_extended_leaf) printf("\tHighest extended leaf: 0x%x (%u)\n", feat->highest_extended_leaf, feat->highest_extended_leaf);
+    if (feat->highest_extended_leaf) printf("\tHighest extended leaf: 0x%x (%u)\n", feat->highest_extended_leaf,
+                                            feat->highest_extended_leaf);
 }
 
 void print_available_features(const cpu_features* feats) {
@@ -135,7 +138,7 @@ void print_available_features(const cpu_features* feats) {
 
     const bool* feature_values = (const bool*)feats;
 
-    printf("\nAvailable CPU Features:\n");
+    puts("Available CPU Features:");
     for (size_t i = 0; i < sizeof(feature_names) / sizeof(feature_names[0]); ++i) {
         if (feature_values[i]) {
             printf("- %s\n", feature_names[i]);
@@ -150,6 +153,7 @@ int main() {
     get_cpu_features(&features, &basic_info);
 
     print_basic_info(&basic_info);
+    putchar('\n');
     print_available_features(&features);
 
     return 0;

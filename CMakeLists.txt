@@ -4,7 +4,7 @@ project(cpuid
         DESCRIPTION "A simple, lightweight x86 CPU features detector"
         LANGUAGES C ASM)
 
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 23)
 
 add_subdirectory(lib)
 
