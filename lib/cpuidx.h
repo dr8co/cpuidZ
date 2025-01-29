@@ -49,8 +49,8 @@ struct cpu_basic_info {
     uint32_t family; /**< Family */
     uint32_t model; /**< Model */
     uint32_t stepping; /**< Stepping ID */
-    uint32_t highest_leaf; /**< Highest leaf */
-    uint32_t highest_extended_leaf; /**< Highest extended leaf */
+    uint32_t highest_leaf; /**< Highest feature leaf */
+    uint32_t highest_extended_leaf; /**< Highest extended feature leaf */
 };
 
 /**

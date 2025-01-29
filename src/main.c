@@ -1,3 +1,7 @@
+#if !(__x86_64__ || __86_64 || __amd64__ || __amd64 || __i386__ || __i386 || _M_AMD64 || _M_X64 || _M_IX86 || __X86__ || _X86_)
+#error "The target arch is not x86."
+#endif
+
 #include <cpuidx.h>
 #include <stdio.h>
 
@@ -5,20 +9,30 @@
 #include <stdbool.h>
 #endif
 
-void print_basic_info(const cpu_basic_info* const feat) {
+/**
+ * Prints basic CPU information.
+ *
+ * @param info A pointer to a \p cpu_basic_info structure containing the basic CPU information.
+ */
+void print_basic_info(const cpu_basic_info* const info) {
     puts("Basic CPU Information:");
-    if (feat->vendor[0] != '\0') printf("\tVendor: %s\n", feat->vendor);
-    if (feat->brand[0] != '\0') printf("\tBrand : %s\n", feat->brand);
-    if (feat->family) printf("\tFamily: 0x%x (%u)\n", feat->family, feat->family);
-    if (feat->model) printf("\tModel : 0x%x (%u)\n", feat->model, feat->model);
-    if (feat->stepping) printf("\tStepping id: 0x%x (%u)\n", feat->stepping, feat->stepping);
-    if (feat->highest_leaf) printf("\tHighest leaf: 0x%x (%u)\n", feat->highest_leaf, feat->highest_leaf);
-    if (feat->highest_extended_leaf) printf("\tHighest extended leaf: 0x%x (%u)\n", feat->highest_extended_leaf,
-                                            feat->highest_extended_leaf);
+    if (info->vendor[0] != '\0') printf("\tVendor: %s\n", info->vendor);
+    if (info->brand[0] != '\0') printf("\tBrand : %s\n", info->brand);
+    if (info->family) printf("\tFamily: 0x%x (%u)\n", info->family, info->family);
+    if (info->model) printf("\tModel : 0x%x (%u)\n", info->model, info->model);
+    if (info->stepping) printf("\tStepping id: 0x%x (%u)\n", info->stepping, info->stepping);
+    if (info->highest_leaf) printf("\tHighest feature leaf: 0x%x (%u)\n", info->highest_leaf, info->highest_leaf);
+    if (info->highest_extended_leaf)
+        printf("\tHighest extended feature leaf: 0x%x (%u)\n", info->highest_extended_leaf, info->highest_extended_leaf);
 }
 
+/**
+ * Prints available CPU features.
+ *
+ * @param feats A pointer to a \p cpu_features structure containing the CPU features.
+ */
 void print_available_features(const cpu_features* feats) {
-    const char* feature_names[] = {
+    static const char* const feature_names[] = {
         "SSE3 (Prescott New Instructions - PNI)", "PCLMULQDQ  (carry-less multiply) instruction",
         "DTES64: 64-bit debug store", "MONITOR: MONITOR and MWAIT instructions (PNI)",
         "DSCPL: CPL qualified debug store", "VMX: Virtual Machine eXtensions",

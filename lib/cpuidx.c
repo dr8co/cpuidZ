@@ -1,6 +1,5 @@
 #include "cpuidx.h"
 #include <string.h>
-#include <stdio.h>
 
 #if defined(__GNUC__) || defined(__clang__)
 #include <cpuid.h>
@@ -8,7 +7,12 @@
 #include <intrin.h>
 #endif
 
-// Function to execute the CPUID instruction
+/**
+ * Function to execute the CPUID instruction.
+ *
+ * @param leaf The CPUID leaf to query.
+ * @param registers An array to store the values of the registers EAX, EBX, ECX, and EDX.
+ */
 void cpuid(uint32_t leaf, uint32_t registers[4]) {
 #if defined(__GNUC__) || defined(__clang__)
     __cpuid(leaf, registers[0], registers[1], registers[2], registers[3]);
@@ -31,7 +35,13 @@ void cpuid(uint32_t leaf, uint32_t registers[4]) {
 #endif
 }
 
-// Function to query extended features
+/**
+ * Function to query extended features using the CPUID instruction.
+ *
+ * @param leaf The CPUID leaf to query.
+ * @param sub_leaf The CPUID sub-leaf to query.
+ * @param registers An array to store the values of the registers EAX, EBX, ECX, and EDX.
+ */
 void cpuid_extended(uint32_t leaf, uint32_t sub_leaf, uint32_t registers[4]) {
 #if defined(__GNUC__) || defined(__clang__)
     __cpuid_count(leaf, sub_leaf, registers[0], registers[1], registers[2], registers[3]);
@@ -54,11 +64,15 @@ void cpuid_extended(uint32_t leaf, uint32_t sub_leaf, uint32_t registers[4]) {
 #endif
 }
 
+/**
+ * Function to get CPU features and basic information.
+ *
+ * @param features A pointer to a \p cpu_features structure to store the CPU features.
+ * @param basic_info A pointer to a \p cpu_basic_info structure to store the basic CPU information.
+ * @return 0 on success, -1 if CPUID instruction is not supported, 1 if highest leaf is 0.
+ */
 int get_cpu_features(cpu_features* features, cpu_basic_info* basic_info) {
-    if (!check_cpuid()) {
-        fputs("CPUID instruction is not supported by your cpu.\n", stderr);
-        return -1;
-    }
+    if (!check_cpuid()) return -1;
 
     uint32_t registers[4] = {0}; // Registers: EAX, EBX, ECX, EDX
 

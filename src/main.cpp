@@ -1,61 +1,110 @@
+#if !(__x86_64__ || __86_64 || __amd64__ || __amd64 || __i386__ || __i386 || _M_AMD64 || _M_X64 || _M_IX86 || __X86__ || _X86_)
+#error "The target arch is not x86."
+#endif
+
 #include <cpuidx.h>
 #include <unordered_map>
 #include <string>
 #include <print>
 #include <tuple>
+#include <limits>
+#include <cassert>
 
-void print_basic_info(const cpu_basic_info& info) {
-    std::println("Basic CPU Information:");
-    if (info.vendor[0] != '\0') std::println("\tVendor: {}", info.vendor);
+/// Concept to check if std::hash<T> is defined.
+/// 
+/// This concept ensures that a type T can be hashed using std::hash.
+/// 
+/// \tparam T The type to check for hashability.
+template <class T>
+concept Hashable = requires(T t) {
+    { std::hash<T>{}(t) } -> std::convertible_to<std::size_t>;
+};
 
-    if (info.brand[0] != '\0') std::println("\tBrand : {}", info.brand);
+/// Hash combination utility function.
+/// 
+/// Combines the hash values of multiple arguments into a single hash value.
+/// 
+/// \tparam T The type of the first argument.
+/// \tparam Other The types of the other arguments.
+/// \param first The first argument to hash.
+/// \param other The other arguments to hash.
+/// \return The combined hash value of all arguments.
+template <class T, class... Other>
+    requires Hashable<T> && (Hashable<Other> && ...)
+constexpr std::size_t hash_combine(const T& first, const Other&... other) {
+    static constexpr std::size_t golden_ratio = std::numeric_limits<std::size_t>::digits == 64
+                                                    ? 0x9e3779b97f4a7c13 // 64-bit golden ratio
+                                                    : 0x9e3779b9; // 32-bit golden ratio
+    // Start with the hash value of the first argument
+    std::size_t seed = std::hash<T>{}(first);
 
-    if (const auto fam = info.family; fam)
-        std::println("\tFamily: 0x{:x} ({})", fam, fam);
-
-    if (const auto mdl = info.model; mdl)
-        std::println("\tModel : 0x{:x} ({})", mdl, mdl);
-
-    if (const auto step = info.stepping; step)
-        std::println("\tStepping id: 0x{:x} ({})", step, step);
-
-    if (const auto hl = info.highest_leaf; hl)
-        std::println("\tHighest leaf: 0x{:x} ({})", hl, hl);
-
-    if (const auto hxl = info.highest_extended_leaf; hxl)
-        std::println("\tHighest extended leaf: 0x{:x} ({})", hxl, hxl);
+    // Combine the hash values of all arguments
+    ((seed ^= (std::hash<Other>{}(other) + golden_ratio + (seed << 6) + (seed >> 2))), ...);
+    return seed;
 }
 
-[[maybe_unused]] constexpr std::size_t golden_ratio_64 = 0x9e3779b97f4a7c13;
-[[maybe_unused]] constexpr std::size_t golden_ratio_32 = 0x9e3779b9;
-
-// Hash combination utility function
-inline std::size_t hash_combine(const std::size_t hash1, const std::size_t hash2) {
-    if constexpr (sizeof(std::size_t) == 8)
-        return hash1 ^ (hash2 + golden_ratio_64 + (hash1 << 6) + (hash1 >> 2));
-    else return hash1 ^ (hash2 + golden_ratio_32 + (hash1 << 6) + (hash1 >> 2));
-}
-
-// Custom hash function for std::tuple
+/// Custom hasher for std::tuple.
+/// 
+/// Provides a way to hash a std::tuple by combining the hash values of its elements.
 struct tuple_hash {
+    /// Hashes a std::tuple by combining the hash values of its elements.
+    ///
+    /// \tparam Types The types of the elements in the tuple.
+    /// \param t The tuple to hash.
+    /// \return The combined hash value of the tuple elements.
     template <class... Types>
     std::size_t operator()(const std::tuple<Types...>& t) const {
-        return std::apply([]<class... T>(const T&... args) {
-            std::size_t seed = 0;
-            ((seed = hash_combine(seed, std::hash<std::decay_t<T>>{}(args))), ...);
-            return seed;
+        return std::apply([]<class... T>(T&&... args) {
+            return hash_combine(std::forward<T>(args)...);
         }, t);
     }
 };
 
-// Custom hash function for std::pair
+/// Custom hasher for std::pair.
+/// 
+/// Provides a way to hash a std::pair by combining the hash values of its elements.
 struct pair_hash {
+    /// Hashes a std::pair by combining the hash values of its elements.
+    /// 
+    /// \tparam T1 The type of the first element in the pair.
+    /// \tparam T2 The type of the second element in the pair.
+    /// \param p The pair to hash.
+    /// \return The combined hash value of the pair elements.
     template <class T1, class T2>
     std::size_t operator()(const std::pair<T1, T2>& p) const {
-        return tuple_hash{}(std::make_tuple(p.first, p.second));
+        if constexpr (Hashable<T1> && Hashable<T2>)
+            return hash_combine(p.first, p.second);
+        else return tuple_hash{}(std::make_tuple(p.first, p.second));
     }
 };
 
+/// Prints basic CPU information.
+/// \param info A reference to a \p cpu_basic_info structure containing the basic CPU information.
+void print_basic_info(const cpu_basic_info& info) {
+    std::println("Basic CPU Information:");
+    if (info.vendor[0] != '\0') std::println("\tVendor     : {}", info.vendor);
+
+    if (info.brand[0] != '\0') std::println("\tBrand      : {}", info.brand);
+
+    if (const auto fam = info.family; fam)
+        std::println("\tFamily     : {:<#4x} ({})", fam, fam);
+
+    if (const auto mdl = info.model; mdl)
+        std::println("\tModel      : {:<#4x} ({})", mdl, mdl);
+
+    if (const auto step = info.stepping; step)
+        std::println("\tStepping id: {:<#4x} ({})", step, step);
+
+    if (const auto hl = info.highest_leaf; hl)
+        std::println("\tHighest feature leaf: {:#x} ({})", hl, hl);
+
+    if (const auto hxl = info.highest_extended_leaf; hxl)
+        std::println("\tHighest extended feature leaf: {:#x} ({})", hxl, hxl);
+}
+
+
+/// Prints available CPU features.
+/// \param feats A reference to a \p cpu_features structure containing the CPU features.
 void print_available_features(const cpu_features& feats) {
     static const std::unordered_map<std::pair<std::string, std::string>, bool, pair_hash> featureMap = {
         {{"SSE3", "(Prescott New Instructions - PNI)"}, feats.SSE3},
@@ -103,7 +152,7 @@ void print_available_features(const cpu_features& feats) {
         {{"MTRR", "Memory Type Range Registers"}, feats.MTRR},
         {{"PGE", "Page Global Enable bit in CR4"}, feats.PGE},
         {{"MCA", "Machine check architecture"}, feats.MCA},
-        {{"CMOV:Conditional move", "CMOV, FCMOV and FCOMI instructions"}, feats.CMOV},
+        {{"CMOV", "Conditional move: CMOV, FCMOV and FCOMI instructions"}, feats.CMOV},
         {{"PAT", "Page Attribute Table"}, feats.PAT},
         {{"PSE36", "36-bit page size extension"}, feats.PSE36},
         {{"PSN", "Processor Serial Number supported and enabled"}, feats.PSN},
@@ -184,8 +233,8 @@ void print_available_features(const cpu_features& feats) {
         },
         {{"SRBDSCTRL", "Special Register Buffer Data Sampling Mitigations"}, feats.SRBDSCTRL},
         {{"MDCLEAR", "VERW instruction clears CPU buffers"}, feats.MDCLEAR},
-        {{"RTMAA (rtm-always-abort)", "All TSX transactions are aborted"}, feats.RTMAA},
-        {{"RTMFA (rtm-force-abort)", "TSX_FORCE_ABORT (MSR 0x10f) is available"}, feats.RTMFA},
+        {{"RTMAA", "(rtm-always-abort): All TSX transactions are aborted"}, feats.RTMAA},
+        {{"RTMFA", "(rtm-force-abort): TSX_FORCE_ABORT (MSR 0x10f) is available"}, feats.RTMFA},
         {{"SERIALIZE", "SERIALIZE instruction"}, feats.SERIALIZE},
         {{"HYBRID", "Hybrid processor (Mixture of CPU types in processor topology)"}, feats.HYBRID},
         {
@@ -298,19 +347,25 @@ void print_available_features(const cpu_features& feats) {
     std::println("Available CPU Features:");
     for (const auto& [name, enabled] : featureMap) {
         if (enabled)
-            std::println("- {}: {}", name.first, name.second);
+            std::println("- {:<13}: {}", name.first, name.second);
     }
 }
 
-int main() {
+int main([[maybe_unused]] const int argc, [[maybe_unused]] char** argv) {
     cpu_features features;
     cpu_basic_info basic_info;
 
-    get_cpu_features(&features, &basic_info);
-
-    print_basic_info(basic_info);
-    std::println();
-    print_available_features(features);
-
-    return 0;
+    switch (get_cpu_features(&features, &basic_info)) {
+        case -1:
+            std::println(stderr, "CPUID instruction is not supported by your cpu.");
+            return 1;
+        case 0:
+            print_basic_info(basic_info);
+            std::println();
+            print_available_features(features);
+            return 0;
+        default:
+            std::println(stderr, "Failed to get CPU features");
+            return 1;
+    }
 }
