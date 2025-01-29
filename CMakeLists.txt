@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.30)
 project(cpuidZ
         VERSION 1.0
         DESCRIPTION "A simple, lightweight x86 CPU features detector"
@@ -11,6 +11,6 @@ set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# The program is built around a library
 add_subdirectory(lib)
-
 add_subdirectory(src)

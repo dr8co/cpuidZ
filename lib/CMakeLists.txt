@@ -1,9 +1,23 @@
-
+# The library
 add_library(cpuidx)
 target_sources(cpuidx PRIVATE
         cpuidx.c
+        # The assembly file is platform-dependent
         $<IF:$<BOOL:${WIN32}>,check_cpuid.asm,check_cpuid.S>
 )
+
+# Options
+option(BUILD_SHARED_LIBS "Build a shared library" OFF)
+
+# MSVC Runtime Library and other settings
+if (MSVC)
+    if (BUILD_SHARED_LIBS)
+        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+        set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    else ()
+        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    endif ()
+endif ()
 
 # Set the include directory for the library
 target_include_directories(cpuidx PUBLIC
@@ -11,6 +25,7 @@ target_include_directories(cpuidx PUBLIC
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
+# Library properties
 set_target_properties(cpuidx PROPERTIES
         VERSION ${PROJECT_VERSION}
         SOVERSION 1
@@ -29,7 +44,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
                 -Wall
                 -Wextra
                 -Werror
-#                -Wpedantic
         )
     endif ()
 endif ()
