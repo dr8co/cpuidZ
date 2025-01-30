@@ -15,3 +15,9 @@ set the `BUILD_SHARED_LIBS` CMake option to `ON` when configuring the build:
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-14 -DCMAKE_CXX_COMPILER=g++-14 -DBUILD_SHARED_LIBS=ON -G Ninja
 ```
+
+## References
+
+- [CPUID Wikipedia](https://en.wikipedia.org/wiki/CPUID)
+
+- [x86 architecture CPUID](https://www.sandpile.org/x86/cpuid.htm)

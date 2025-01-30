@@ -54,7 +54,7 @@ jobs:
                if [[ "${{ matrix.c_compiler }}" == "gcc" ]]; then
                   sudo apt-get install ninja-build gcc-14 g++-14 -y
                elif [[ "${{ matrix.c_compiler }}" == "clang" ]]; then
-                  sudo apt-get install ninja-build llvm-19 libc++-19-dev libc++abi-19-dev -y
+                  sudo apt-get install ninja-build clang-19 clang-tools-19 -y
                fi
           elif [[ "${{ matrix.os }}" == "macos-13" ]]; then
               if [[ "${{ matrix.c_compiler }}" == "clang" ]]; then
@@ -64,7 +64,8 @@ jobs:
               fi
           elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
               if [[ "${{ matrix.c_compiler }}" == "clang" ]]; then
-                  choco install ninja llvm -y
+                  choco upgrade llvm -y
+                  choco install ninja -y
               else
                   choco install ninja -y
               fi
@@ -120,8 +121,8 @@ jobs:
         if: matrix.os == 'macos-13' && matrix.c_compiler == 'clang'
         run: >
           cmake -B ${{ steps.strings.outputs.build-output-dir }}
-          -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-          -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
+          -DCMAKE_CXX_COMPILER=${{ steps.compiler-path.outputs.clangxxpath }} \
+          -DCMAKE_C_COMPILER=${{ steps.compiler-path.outputs.clangpath }} \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           -DCMAKE_EXE_LINKER_FLAGS="-L$(brew --prefix llvm@19)lib/c++ -Wl,-rpath,$(brew --prefix llvm@19)lib/c++"
           -S ${{ github.workspace }} -G Ninja
