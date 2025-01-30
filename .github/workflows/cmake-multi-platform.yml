@@ -1,0 +1,114 @@
+name: CMake on multiple platforms
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-13]
+        build_type: [Debug]
+        c_compiler: [gcc, clang, cl]
+        include:
+          - os: windows-latest
+            c_compiler: cl
+            cpp_compiler: cl
+          - os: windows-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+          - os: ubuntu-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+          - os: macos-13
+            c_compiler: clang
+            cpp_compiler: clang++
+          - os: macos-13
+            c_compiler: gcc
+            cpp_compiler: g++
+        exclude:
+          - os: windows-latest
+            c_compiler: gcc
+#          - os: windows-latest
+#            c_compiler: clang
+          - os: ubuntu-latest
+            c_compiler: cl
+          - os: macos-13
+            c_compiler: cl
+
+    steps:
+      - name: Install Ninja
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get install ninja-build -y
+
+      - name: Install LLVM
+        if: matrix.os == 'macos-13' && matrix.c_compiler == 'clang'
+        run: brew install llvm@19
+
+      - uses: actions/checkout@v4
+
+      - name: Set reusable strings
+        # Turn repeated input strings (such as the build output directory) into step outputs.
+        id: strings
+        shell: bash
+        run: |
+          echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
+      - name: Set Clang & GCC paths
+        id: compiler-path
+        shell: bash
+        run: |
+          if [[ "${{ matrix.os }}" == "macos-13" && "${{ matrix.c_compiler }}" == "clang" ]]; then
+            echo "clangpath=$(brew --prefix llvm@19)/bin/clang" >> "$GITHUB_OUTPUT"
+            echo "clangxxpath=$(brew --prefix llvm@19)/bin/clang++" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ matrix.os }}" == "ubuntu-latest" && "${{ matrix.c_compiler }}" == "clang" ]]; then
+            echo "clangpath=clang-18" >> "$GITHUB_OUTPUT"
+            echo "clangxxpath=clang++-18" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ matrix.os }}" == "windows" && "${{ matrix.c_compiler }}" == "clang" ]]; then
+            echo "clangpath=clang" >> "$GITHUB_OUTPUT"
+            echo "clangxxpath=clang++" >> "$GITHUB_OUTPUT"
+          fi
+          if [[ "${{ matrix.c_compiler }}" == "gcc" ]]; then
+            echo "gccpath=gcc-14" >> "$GITHUB_OUTPUT"
+            echo "gxxpath=g++-14" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Configure CMake
+        # Configure CMake in a 'build' subdirectory.
+        run: |
+          if [[ "${{ matrix.c_compiler }}" == "clang" ]]; then
+            cmake -B ${{ steps.strings.outputs.build-output-dir }} \
+              -DCMAKE_CXX_COMPILER=${{ steps.compiler-path.outputs.clangxxpath }} \
+              -DCMAKE_C_COMPILER=${{ steps.compiler-path.outputs.clangpath }} \
+              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+              -S ${{ github.workspace }}
+          elif [[ "${{ matrix.c_compiler }}" == "gcc" ]]; then
+            cmake -B ${{ steps.strings.outputs.build-output-dir }} \
+              -DCMAKE_CXX_COMPILER=${{ steps.compiler-path.outputs.gxxpath }} \
+              -DCMAKE_C_COMPILER=${{ steps.compiler-path.outputs.gccpath }} \
+              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+              -S ${{ github.workspace }}
+          else
+            cmake -B ${{ steps.strings.outputs.build-output-dir }} \
+              -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
+              -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
+              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+              -S ${{ github.workspace }}
+          fi
+
+      - name: Build
+        # Build your program with the given configuration.
+        run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+
+      - name: Run cpuidz
+        run: ${{ steps.strings.outputs.build-output-dir }}/src/cpuidzpp
