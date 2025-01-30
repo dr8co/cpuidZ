@@ -58,7 +58,7 @@ jobs:
                fi
           elif [[ "${{ matrix.os }}" == "macos-13" ]]; then
               if [[ "${{ matrix.c_compiler }}" == "clang" ]]; then
-                  brew install ninja llvm@19
+                  brew install ninja lld llvm@19
               else
                   brew install ninja
               fi
@@ -121,10 +121,10 @@ jobs:
         if: matrix.os == 'macos-13' && matrix.c_compiler == 'clang'
         run: >
           cmake -B ${{ steps.strings.outputs.build-output-dir }}
-          -DCMAKE_CXX_COMPILER=${{ steps.compiler-path.outputs.clangxxpath }} \
-          -DCMAKE_C_COMPILER=${{ steps.compiler-path.outputs.clangpath }} \
+          -DCMAKE_CXX_COMPILER=${{ steps.compiler-path.outputs.clangxxpath }}
+          -DCMAKE_C_COMPILER=${{ steps.compiler-path.outputs.clangpath }}
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-          -DCMAKE_EXE_LINKER_FLAGS="-L$(brew --prefix llvm@19)lib/c++ -Wl,-rpath,$(brew --prefix llvm@19)lib/c++"
+          -DCMAKE_EXE_LINKER_FLAGS="-L$(brew --prefix llvm@19)/lib/c++ -Wl,-rpath,$(brew --prefix llvm@19)/lib/c++"
           -S ${{ github.workspace }} -G Ninja
 
       - name: Configure CMake
@@ -143,7 +143,7 @@ jobs:
           -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
           -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-          -S ${{ github.workspace }} -G Ninja
+          -S ${{ github.workspace }} -G 'Visual Studio 17 2022'
 
       - name: Build
         # Build your program with the given configuration.
