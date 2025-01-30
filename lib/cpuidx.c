@@ -17,7 +17,7 @@ void cpuid(uint32_t leaf, uint32_t registers[4]) {
 #if defined(__GNUC__) || defined(__clang__)
     __cpuid(leaf, registers[0], registers[1], registers[2], registers[3]);
 #elif defined(_MSC_VER)
-    __cpuid(registers, leaf);
+    __cpuid((int *) registers, (int) leaf);
 #else
 #ifdef __x86_64__
     __asm__ volatile (
@@ -46,7 +46,7 @@ void cpuid_extended(uint32_t leaf, uint32_t sub_leaf, uint32_t registers[4]) {
 #if defined(__GNUC__) || defined(__clang__)
     __cpuid_count(leaf, sub_leaf, registers[0], registers[1], registers[2], registers[3]);
 #elif defined(_MSC_VER)
-    __cpuidex(registers, leaf, subleaf);
+    __cpuidex((int *) registers, (int) leaf, (int) sub_leaf);
 #else
 #ifdef __x86_64__
     __asm__ volatile (
