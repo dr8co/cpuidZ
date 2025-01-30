@@ -8,7 +8,9 @@
     .section .text
 #endif
     .global check_cpuid
+    .global _check_cpuid
 
+_check_cpuid:
 check_cpuid:
 #ifdef __x86_64__
     # x86-64: Use RFLAGS

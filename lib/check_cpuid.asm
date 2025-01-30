@@ -1,10 +1,13 @@
 ; check_cpuid.asm
+.model flat, c
 .code
 
 ; Declare the function for the linker
+PUBLIC _check_cpuid
 PUBLIC check_cpuid
 
 check_cpuid PROC
+_check_cpuid PROC
 IFDEF _WIN64
     ; x64 Windows Calling Convention (Result in RAX)
     pushfq                          ; Push RFLAGS onto the stack
@@ -40,6 +43,8 @@ ELSE
     movzx   eax, al                 ; Zero-extend AL into EAX
     ret
 ENDIF
+
+_check_cpuid ENDP
 check_cpuid ENDP
 
 END
