@@ -3,7 +3,7 @@ add_library(cpuidx)
 target_sources(cpuidx PRIVATE
         cpuidx.c
         # The assembly file is platform-dependent
-        $<IF:$<BOOL:${WIN32}>,check_cpuid.asm,check_cpuid.S>
+        $<IF:$<BOOL:${MSVC}>,check_cpuid.asm,check_cpuid.S>
 )
 
 # Options

@@ -47,13 +47,28 @@ jobs:
             c_compiler: cl
 
     steps:
-      - name: Install Ninja
-        if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get install ninja-build -y
-
-      - name: Install LLVM 19 and Ninja
-        if: matrix.os == 'macos-13'
-        run: brew install llvm@19 ninja
+      - name: Install Dependencies
+        shell: bash
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+               if [[ "${{ matrix.c_compiler }}" == "gcc" ]]; then
+                  sudo apt-get install ninja gcc-14 g++-14 -y
+               elif [[ "${{ matrix.c_compiler }}" == "clang" ]]; then
+                  sudo apt-get install ninja-build llvm-19 libc++-19-dev libc++abi-19-dev -y
+               fi
+          elif [[ "${{ matrix.os }}" == "macos-13" ]]; then
+              if [[ "${{ matrix.c_compiler }}" == "clang" ]]; then
+                  brew install ninja llvm@19
+              else
+                  brew install ninja
+              fi
+          elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+              if [[ "${{ matrix.c_compiler }}" == "clang" ]]; then
+                  choco install ninja llvm -y
+              else
+                  choco install ninja -y
+              fi
+          fi
 
       - uses: actions/checkout@v4
 
@@ -64,16 +79,6 @@ jobs:
         run: |
           echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
-      - name: Set the generator
-        id: set-generator
-        shell: bash
-        run: |
-          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            echo "generator='Visual Studio 17 2022'" >> "$GITHUB_OUTPUT"
-          else
-            echo "generator=Ninja" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Set Clang & GCC paths
         id: compiler-path
         shell: bash
@@ -82,8 +87,8 @@ jobs:
             echo "clangpath=$(brew --prefix llvm@19)/bin/clang" >> "$GITHUB_OUTPUT"
             echo "clangxxpath=$(brew --prefix llvm@19)/bin/clang++" >> "$GITHUB_OUTPUT"
           elif [[ "${{ matrix.os }}" == "ubuntu-latest" && "${{ matrix.c_compiler }}" == "clang" ]]; then
-            echo "clangpath=clang-18" >> "$GITHUB_OUTPUT"
-            echo "clangxxpath=clang++-18" >> "$GITHUB_OUTPUT"
+            echo "clangpath=clang-19" >> "$GITHUB_OUTPUT"
+            echo "clangxxpath=clang++-19" >> "$GITHUB_OUTPUT"
           elif [[ "${{ matrix.os }}" == "windows-latest" && "${{ matrix.c_compiler }}" == "clang" ]]; then
             echo "clangpath=clang" >> "$GITHUB_OUTPUT"
             echo "clangxxpath=clang++" >> "$GITHUB_OUTPUT"
@@ -97,25 +102,29 @@ jobs:
         if: matrix.os == 'macos-13' || matrix.os == 'ubuntu-latest'
         # Configure CMake in a 'build' subdirectory.
         run: |
-          if [[ "${{ matrix.c_compiler }}" == "clang" ]]; then
+          if [[ "${{ matrix.c_compiler }}" == "clang" && "${{ matrix.os }}" == "ubuntu-latest"]]; then
             cmake -B ${{ steps.strings.outputs.build-output-dir }} \
               -DCMAKE_CXX_COMPILER=${{ steps.compiler-path.outputs.clangxxpath }} \
               -DCMAKE_C_COMPILER=${{ steps.compiler-path.outputs.clangpath }} \
               -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-              -S ${{ github.workspace }} -G ${{ steps.set-generator.outputs.generator }}
+              -S ${{ github.workspace }} -G Ninja
           elif [[ "${{ matrix.c_compiler }}" == "gcc" ]]; then
             cmake -B ${{ steps.strings.outputs.build-output-dir }} \
               -DCMAKE_CXX_COMPILER=${{ steps.compiler-path.outputs.gxxpath }} \
               -DCMAKE_C_COMPILER=${{ steps.compiler-path.outputs.gccpath }} \
               -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-              -S ${{ github.workspace }} -G ${{ steps.set-generator.outputs.generator }}
-          else
-            cmake -B ${{ steps.strings.outputs.build-output-dir }} \
-              -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
-              -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
-              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-              -S ${{ github.workspace }} -G ${{ steps.set-generator.outputs.generator }}
-          fi
+              -S ${{ github.workspace }} -G Ninja
+            fi
+
+      - name: Configure CMake
+        if: matrix.os == 'macos-13' && matrix.c_compiler == 'clang'
+        run: >
+          cmake -B ${{ steps.strings.outputs.build-output-dir }}
+          -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+          -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DCMAKE_EXE_LINKER_FLAGS="-L$(brew --prefix llvm@19)lib/c++ -Wl,-rpath,$(brew --prefix llvm@19)lib/c++"
+          -S ${{ github.workspace }} -G Ninja
 
       - name: Configure CMake
         if: matrix.os == 'windows-latest' && matrix.c_compiler == 'clang'
@@ -124,7 +133,7 @@ jobs:
           -DCMAKE_CXX_COMPILER=${{ steps.compiler-path.outputs.clangxxpath }}
           -DCMAKE_C_COMPILER=${{ steps.compiler-path.outputs.clangpath }}
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-          -S ${{ github.workspace }} -G ${{ steps.set-generator.outputs.generator }}
+          -S ${{ github.workspace }} -G Ninja
 
       - name: Configure CMake
         if: matrix.os == 'windows-latest' && matrix.c_compiler == 'cl'
@@ -133,7 +142,7 @@ jobs:
           -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
           -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-          -S ${{ github.workspace }} -G ${{ steps.set-generator.outputs.generator }}
+          -S ${{ github.workspace }} -G Ninja
 
       - name: Build
         # Build your program with the given configuration.
