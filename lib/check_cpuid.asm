@@ -1,5 +1,11 @@
 ; check_cpuid.asm
-.model flat, c
+
+ifndef X64
+.686p
+.XMM
+.model flat, C
+endif
+
 .code
 
 ; Declare the function for the linker
@@ -8,7 +14,7 @@ PUBLIC check_cpuid
 
 check_cpuid PROC
 _check_cpuid PROC
-IFDEF _WIN64
+ifdef X64
     ; x64 Windows Calling Convention (Result in RAX)
     pushfq                          ; Push RFLAGS onto the stack
     pop     rax                     ; Pop it into RAX
@@ -25,7 +31,7 @@ IFDEF _WIN64
     sete    al                      ; AL = 1 if ID flag was toggled, else 0
     movzx   eax, al                 ; Zero-extend AL into EAX
     ret
-ELSE
+else
     ; x86 Windows Calling Convention (Result in EAX)
     pushfd                          ; Push EFLAGS onto the stack
     pop     eax                     ; Pop it into EAX
@@ -42,9 +48,9 @@ ELSE
     sete    al                      ; AL = 1 if ID flag was toggled, else 0
     movzx   eax, al                 ; Zero-extend AL into EAX
     ret
-ENDIF
+endif
 
 _check_cpuid ENDP
 check_cpuid ENDP
 
-END
+end

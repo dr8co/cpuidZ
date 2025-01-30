@@ -51,9 +51,9 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get install ninja-build -y
 
-      - name: Install LLVM 19
+      - name: Install LLVM 19 and Ninja
         if: matrix.os == 'macos-13'
-        run: brew install llvm@19
+        run: brew install llvm@19 ninja
 
       - uses: actions/checkout@v4
 
@@ -70,8 +70,6 @@ jobs:
         run: |
           if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
             echo "generator='Visual Studio 17 2022'" >> "$GITHUB_OUTPUT"
-          elif [[ "${{ matrix.os }}" == "macos-13" ]]; then
-            echo "generator=Xcode" >> "$GITHUB_OUTPUT"
           else
             echo "generator=Ninja" >> "$GITHUB_OUTPUT"
           fi
