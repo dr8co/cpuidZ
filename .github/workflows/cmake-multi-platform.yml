@@ -84,6 +84,7 @@ jobs:
           fi
 
       - name: Configure CMake
+        shell: bash
         # Configure CMake in a 'build' subdirectory.
         run: |
           if [[ "${{ matrix.c_compiler }}" == "clang" ]]; then
