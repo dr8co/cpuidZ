@@ -4,6 +4,10 @@ project(cpuidZ
         DESCRIPTION "A simple, lightweight x86 CPU features detector"
         LANGUAGES CXX C ASM)
 
+if (MSVC)
+    enable_language(ASM_MASM)
+endif ()
+
 # The C code is compatible with C99+, but compiling with C23 standard is recommended, if available
 set(CMAKE_C_STANDARD 23)
 
