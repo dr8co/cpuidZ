@@ -80,11 +80,13 @@ int get_cpu_features(cpu_features* features, cpu_basic_info* basic_info) {
     cpuid(0, registers);
 
     if ((basic_info->highest_leaf = registers[0])) {
-        // Check for the CPU vendor
+        // The vendor string must be null-terminated
+        memset(basic_info->vendor, '\0', 13);
+
+        // Copy the vendor string
         memcpy(basic_info->vendor, &registers[1], 4);
         memcpy(basic_info->vendor + 4, &registers[3], 4);
         memcpy(basic_info->vendor + 8, &registers[2], 4);
-        basic_info->vendor[12] = '\0';
 
         // Highest extended function calling parameter
         cpuid(0x80000000, registers);
@@ -92,13 +94,16 @@ int get_cpu_features(cpu_features* features, cpu_basic_info* basic_info) {
 
         // Check for the CPU brand string
         if (basic_info->highest_extended_leaf >= 0x80000004) {
+            // Ensure the brand string is null-terminated
+            memset(basic_info->brand, '\0', 49);
+
+            // Get the brand string
             cpuid(0x80000002, registers);
             memcpy(basic_info->brand, registers, 16);
             cpuid(0x80000003, registers);
             memcpy(basic_info->brand + 16, registers, 16);
             cpuid(0x80000004, registers);
             memcpy(basic_info->brand + 32, registers, 16);
-            basic_info->brand[48] = '\0';
         }
 
         // Check for the CPU family, model, and stepping

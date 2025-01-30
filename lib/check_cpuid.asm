@@ -1,7 +1,7 @@
 ; check_cpuid.asm
 
 ifndef X64
-.686p
+.686
 .XMM
 .model flat, C
 endif
