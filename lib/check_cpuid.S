@@ -1,4 +1,12 @@
+#if defined(__ELF__) && defined(__linux__)
+    .section .note.GNU-stack,"",%progbits
+#endif
+
+#ifdef __APPLE__
+    .text
+#else
     .section .text
+#endif
     .global check_cpuid
 
 check_cpuid:
@@ -41,6 +49,3 @@ check_cpuid:
     movzbl %al, %eax                # Zero-extend AL into EAX
     ret                             # Return result in EAX
 #endif
-
-    # Ensure the stack is not executable
-    .section .note.GNU-stack,"",@progbits
