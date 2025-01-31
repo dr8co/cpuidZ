@@ -352,8 +352,8 @@ void print_available_features(const cpu_features& feats) {
 }
 
 int main([[maybe_unused]] const int argc, [[maybe_unused]] char** argv) {
-    cpu_features features;
-    cpu_basic_info basic_info;
+    cpu_features features{};
+    cpu_basic_info basic_info{};
 
     switch (get_cpu_features(&features, &basic_info)) {
         case -1:

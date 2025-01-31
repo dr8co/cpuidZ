@@ -161,8 +161,8 @@ void print_available_features(const cpu_features* feats) {
 }
 
 int main() {
-    cpu_features features;
-    cpu_basic_info basic_info;
+    cpu_features features = {};
+    cpu_basic_info basic_info = {};
 
     get_cpu_features(&features, &basic_info);
 

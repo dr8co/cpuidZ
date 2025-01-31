@@ -1,11 +1,3 @@
-# The assembly code targeting msvc is written in MASM syntax
-if (MSVC)
-    enable_language(ASM_MASM)
-    set_source_files_properties(check_cpuid.asm PROPERTIES
-            LANGUAGE ASM_MASM
-    )
-endif ()
-
 # The library
 add_library(cpuidx)
 target_sources(cpuidx PRIVATE

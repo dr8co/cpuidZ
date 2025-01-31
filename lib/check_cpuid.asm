@@ -1,10 +1,10 @@
 ; check_cpuid.asm
 
-ifndef X64
+IFNDEF _M_X64
 .686
 .XMM
 .model flat, C
-endif
+ENDIF
 
 .code
 
@@ -14,7 +14,7 @@ PUBLIC check_cpuid
 
 check_cpuid PROC
 _check_cpuid PROC
-ifdef X64
+IFDEF _M_X64
     ; x64 Windows Calling Convention (Result in RAX)
     pushfq                          ; Push RFLAGS onto the stack
     pop     rax                     ; Pop it into RAX
@@ -31,7 +31,7 @@ ifdef X64
     sete    al                      ; AL = 1 if ID flag was toggled, else 0
     movzx   eax, al                 ; Zero-extend AL into EAX
     ret
-else
+ELSE
     ; x86 Windows Calling Convention (Result in EAX)
     pushfd                          ; Push EFLAGS onto the stack
     pop     eax                     ; Pop it into EAX
@@ -48,9 +48,9 @@ else
     sete    al                      ; AL = 1 if ID flag was toggled, else 0
     movzx   eax, al                 ; Zero-extend AL into EAX
     ret
-endif
+ENDIF
 
 _check_cpuid ENDP
 check_cpuid ENDP
 
-end
+END
