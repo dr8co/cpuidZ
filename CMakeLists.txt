@@ -1,16 +1,9 @@
 cmake_minimum_required(VERSION 3.30)
 
-# The assembly file targeting Windows is written in MASM syntax
-if (MSVC)
-    set(ASM_DIALECT "ASM_MASM")
-else ()
-    set(ASM_DIALECT "ASM")
-endif ()
-
 project(cpuidZ
         VERSION 1.0
         DESCRIPTION "A simple, lightweight x86 CPU features detector"
-        LANGUAGES CXX C ${ASM_DIALECT}
+        LANGUAGES CXX C ASM
 )
 
 # The C code is compatible with C99+, but compiling with C23 standard is recommended, if available

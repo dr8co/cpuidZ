@@ -1,5 +1,11 @@
 # The library
 add_library(cpuidx)
+
+
+if (MSVC)
+    enable_language(ASM_MASM)
+endif ()
+
 target_sources(cpuidx PRIVATE
         cpuidx.c
         # The assembly file is platform-dependent
