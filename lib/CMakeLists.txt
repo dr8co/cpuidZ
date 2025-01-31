@@ -4,6 +4,7 @@ add_library(cpuidx)
 
 if (MSVC)
     enable_language(ASM_MASM)
+    set_source_files_properties(check_cpuid.asm PROPERTIES LANGUAGE ASM_MASM)
 endif ()
 
 target_sources(cpuidx PRIVATE
