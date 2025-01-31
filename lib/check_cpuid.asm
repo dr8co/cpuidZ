@@ -1,11 +1,7 @@
 ; check_cpuid.asm
+; Assembly code for the check_cpuid function
 
-IFNDEF _M_X64
-.686
-.XMM
-.model flat, C
-ENDIF
-
+IFDEF RAX
 .code
 
 ; Declare the function for the linker
@@ -14,7 +10,7 @@ PUBLIC check_cpuid
 
 check_cpuid PROC
 _check_cpuid PROC
-IFDEF _M_X64
+
     ; x64 Windows Calling Convention (Result in RAX)
     pushfq                          ; Push RFLAGS onto the stack
     pop     rax                     ; Pop it into RAX
@@ -32,6 +28,17 @@ IFDEF _M_X64
     movzx   eax, al                 ; Zero-extend AL into EAX
     ret
 ELSE
+.686
+.XMM
+.model flat, C
+.code
+
+; Declare the function for the linker
+PUBLIC _check_cpuid
+PUBLIC check_cpuid
+
+check_cpuid PROC
+_check_cpuid PROC
     ; x86 Windows Calling Convention (Result in EAX)
     pushfd                          ; Push EFLAGS onto the stack
     pop     eax                     ; Pop it into EAX
