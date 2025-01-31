@@ -35,7 +35,7 @@ target_include_directories(cpuidx PUBLIC
 set_target_properties(cpuidx PROPERTIES
         VERSION ${PROJECT_VERSION}
         SOVERSION 1
-        PUBLIC_HEADER cpuidx.h
+        PUBLIC_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/cpuidx.h"
 )
 
 # Additional compile options for the Debug build
