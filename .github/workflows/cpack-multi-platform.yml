@@ -1,0 +1,110 @@
+name: CMake on multiple platforms
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-13 ]
+        build_type: [ Release ]
+        c_compiler: [ clang ]
+        include:
+          - os: windows-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+          - os: ubuntu-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+          - os: macos-13
+            c_compiler: clang
+            cpp_compiler: clang++
+
+    steps:
+      - name: Install Dependencies
+        shell: bash
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+            wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+            sudo apt-add-repository "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-19 main"
+            sudo apt-get update
+            sudo apt-get install rpm ninja-build clang-19 clang-tools-19 -y
+          elif [[ "${{ matrix.os }}" == "macos-13" ]]; then
+            brew install ninja lld llvm@19
+          elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            choco upgrade llvm -y
+            choco install nasm ninja -y
+          fi
+
+      - uses: actions/checkout@v4
+
+      - name: Set reusable strings
+        # Turn repeated input strings (such as the build output directory) into step outputs.
+        id: strings
+        shell: bash
+        run: |
+          echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
+      - name: Set Clang compilers' paths
+        id: compiler-path
+        shell: bash
+        run: |
+          if [[ "${{ matrix.os }}" == "macos-13" ]]; then
+            echo "clangpath=$(brew --prefix llvm@19)/bin/clang" >> "$GITHUB_OUTPUT"
+            echo "clangxxpath=$(brew --prefix llvm@19)/bin/clang++" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+            echo "clangpath=clang-19" >> "$GITHUB_OUTPUT"
+            echo "clangxxpath=clang++-19" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            echo "clangpath=clang" >> "$GITHUB_OUTPUT"
+            echo "clangxxpath=clang++" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Configure CMake
+        if: matrix.os == 'windows-latest' || matrix.os == 'ubuntu-latest'
+        # Configure CMake in a 'build' subdirectory.
+        run: >
+          cmake -B ${{ steps.strings.outputs.build-output-dir }}
+          -DCMAKE_CXX_COMPILER=${{ steps.compiler-path.outputs.clangxxpath }}
+          -DCMAKE_C_COMPILER=${{ steps.compiler-path.outputs.clangpath }}
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} 
+          -DPACKAGE_PROJECT=ON
+          -S ${{ github.workspace }} -G Ninja
+
+      - name: Configure CMake
+        if: matrix.os == 'macos-13'
+        run: >
+          cmake -B ${{ steps.strings.outputs.build-output-dir }}
+          -DCMAKE_CXX_COMPILER=${{ steps.compiler-path.outputs.clangxxpath }}
+          -DCMAKE_C_COMPILER=${{ steps.compiler-path.outputs.clangpath }}
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DPACKAGE_PROJECT=ON
+          -DCMAKE_EXE_LINKER_FLAGS="-L$(brew --prefix llvm@19)/lib/c++ -Wl,-rpath,$(brew --prefix llvm@19)/lib/c++"
+          -S ${{ github.workspace }} -G Ninja
+
+      - name: Build
+        # Build your program with the given configuration.
+        run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} -j 3
+
+      - name: Run cpuidz
+        run: ${{ steps.strings.outputs.build-output-dir }}/src/cpuidzpp
+
+      - name: Package
+        working-directory: ${{ steps.strings.outputs.build-output-dir }}
+        run: cpack
+
+      - name: Upload Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ runner.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}"
+          path: "${{ steps.strings.outputs.build-output-dir }}/Packages"
+          overwrite: true
+          if-no-files-found: 'warn'
