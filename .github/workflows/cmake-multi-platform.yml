@@ -143,7 +143,7 @@ jobs:
         if: matrix.os == 'windows-latest' && matrix.c_compiler == 'cl'
         shell: cmd
         run: |
-          C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\vsdevcmd.bat
+          "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\vsdevcmd.bat"
           cmake -B ${{ steps.strings.outputs.build-output-dir }} ^
           -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} ^
           -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} ^
