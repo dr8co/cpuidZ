@@ -59,6 +59,26 @@ After building the project, you can run the executables to get CPUID information
     ./build/src/cpuidzpp
     ```
 
+To use the library in your own project, use CMake's FetchContent module to include the library in your project:
+
+```cmake
+include(FetchContent)
+FetchContent_Declare(
+    cpuidz
+    GIT_REPOSITORY https://github.com/dr8co/cpuidZ.git
+    GIT_TAG v1.0.0
+    EXCLUDE_FROM_ALL
+)
+
+FetchContent_MakeAvailable(cpuidz)
+
+# Link the library to your target
+target_link_libraries(your_target PRIVATE cpuidzx::cpuidzx)
+```
+
+For installation, visit the [Releases Page](https://github.com/dr8co/cpuidZ/releases)
+to download the pre-built binaries.
+
 ## License
 
 This project is licensed under the MIT License.

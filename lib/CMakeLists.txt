@@ -12,6 +12,8 @@ target_sources(cpuidx PRIVATE
         $<IF:$<BOOL:${MSVC}>,check_cpuid_nasm.asm,check_cpuid.S>
 )
 
+add_library(cpuidx::cpuidx ALIAS cpuidx)
+
 # Options
 option(BUILD_SHARED_LIBS "Build a shared library" OFF)
 

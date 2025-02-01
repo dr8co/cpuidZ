@@ -33,7 +33,6 @@ ELSE
 .model flat, C
 .code
 
-; Declare the function for the linker
 PUBLIC _check_cpuid
 PUBLIC check_cpuid
 

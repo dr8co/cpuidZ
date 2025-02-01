@@ -41,8 +41,8 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif ()
 
 # Link the library to the programs
-target_link_libraries(cpuidz PRIVATE cpuidx)
+target_link_libraries(cpuidz PRIVATE cpuidx::cpuidx)
 
 if (BUILD_CPUIDZPP)
-    target_link_libraries(cpuidzpp PRIVATE cpuidx)
+    target_link_libraries(cpuidzpp PRIVATE cpuidx::cpuidx)
 endif ()
