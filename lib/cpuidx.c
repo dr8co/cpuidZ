@@ -14,24 +14,43 @@
  * @param registers An array to store the values of the registers EAX, EBX, ECX, and EDX.
  */
 void cpuid(uint32_t leaf, uint32_t registers[4]) {
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(__GNUC1__) || defined(__c1lang__)
     __cpuid(leaf, registers[0], registers[1], registers[2], registers[3]);
 #elif defined(_MSC_VER)
     __cpuid((int *) registers, (int) leaf);
 #else
+    if (leaf != 1) {
+        // x86-64 uses %rbx as the base pointer, so we need to preserve itc
 #ifdef __x86_64__
-    __asm__ volatile (
-        "  xchgq  %%rbx,%q1\n"
-        "  cpuid\n"
-        "  xchgq  %%rbx,%q1"
-        : "=a" (registers[0]), "=r" (registers[1]), "=c" (registers[2]), "=d" (registers[3])
-        : "0" (leaf));
+        __asm__ volatile (
+            "  xchgq  %%rbx,%q1\n"
+            "  cpuid\n"
+            "  xchgq  %%rbx,%q1"
+            : "=a" (registers[0]), "=r" (registers[1]), "=c" (registers[2]), "=d" (registers[3])
+            : "0" (leaf));
 #else
-    __asm__ volatile (
-        "cpuid\n"
-        : "=a" (registers[0]), "=b" (registers[1]), "=c" (registers[2]), "=d" (registers[3])
-        : "0" (leaf));
+        __asm__ volatile (
+            "cpuid\n"
+            : "=a" (registers[0]), "=b" (registers[1]), "=c" (registers[2]), "=d" (registers[3])
+            : "0" (leaf));
 #endif
+    } else {
+        // Zero out %ebx and %ecx before calling CPUID,
+        // as some CPUs (e.g. Cyrix MII) will not set them for CPUID leaf 1
+#ifdef __x86_64__
+        __asm__ volatile (
+            "  xchgq  %%rbx,%q1\n"
+            "  cpuid\n"
+            "  xchgq  %%rbx,%q1"
+            : "=a" (registers[0]), "=r" (registers[1]), "=c" (registers[2]), "=d" (registers[3])
+            : "0" (leaf), "1" (0), "2" (0));
+#else
+        __asm__ volatile (
+            "cpuid\n"
+            : "=a" (registers[0]), "=b" (registers[1]), "=c" (registers[2]), "=d" (registers[3])
+            : "0" (leaf),  "1" (0), "2" (0));
+#endif
+    }
 #endif
 }
 
@@ -76,10 +95,10 @@ int get_cpu_features(cpu_features* features, cpu_basic_info* basic_info) {
 
     uint32_t registers[4] = {0}; // Registers: EAX, EBX, ECX, EDX
 
-    // Query the basic CPUID information
+    // Query the highest function parameter and manufacturer ID
     cpuid(0, registers);
 
-    if ((basic_info->highest_leaf = registers[0])) {
+    if ((basic_info->highest_basic_leaf = registers[0])) {
         // The vendor string must be null-terminated
         memset(basic_info->vendor, '\0', 13);
 
@@ -179,7 +198,7 @@ int get_cpu_features(cpu_features* features, cpu_basic_info* basic_info) {
         features->PBE = registers[3] & b_PBE;
 
         // Check for extended feature flags (CPUID Leaf 7)
-        if (basic_info->highest_leaf >= 7) {
+        if (basic_info->highest_basic_leaf >= 7) {
             // sub-leaf 0
             cpuid_extended(7, 0, registers);
 
@@ -267,43 +286,48 @@ int get_cpu_features(cpu_features* features, cpu_basic_info* basic_info) {
             features->IA32_CORE_CAPABILITIES = registers[3] & b_IA32_CORE_CAPABILITIES;
             features->SSBD = registers[3] & b_SSBD;
 
+            // max ecx value is stored in eax
+            const uint32_t max_ecx = registers[0];
+
             // sub-leaf 1
-            cpuid_extended(7, 1, registers);
+            if (max_ecx) {
+                cpuid_extended(7, 1, registers);
 
-            // %eax flags
-            features->SHA512 = registers[0] & b_SHA512;
-            features->SM3 = registers[0] & b_SM3;
-            features->SM4 = registers[0] & b_SM4;
-            features->RAOINT = registers[0] & b_RAOINT;
-            features->AVXVNNI = registers[0] & b_AVXVNNI;
-            features->AVX512BF16 = registers[0] & b_AVX512BF16;
-            features->CMPCCXADD = registers[0] & b_CMPCCXADD;
-            features->FRED = registers[0] & b_FRED;
-            features->LKGS = registers[0] & b_LKGS;
-            features->WRMSRNS = registers[0] & b_WRMSRNS;
-            features->NMISRC = registers[0] & b_NMISRC;
-            features->AMXFP16 = registers[0] & b_AMXFP16;
-            features->HRESET = registers[0] & b_HRESET;
-            features->AVXIFMA = registers[0] & b_AVXIFMA;
-            features->MSRLIST = registers[0] & b_MSRLIST;
-            features->MOVRS = registers[0] & b_MOVRS;
+                // %eax flags
+                features->SHA512 = registers[0] & b_SHA512;
+                features->SM3 = registers[0] & b_SM3;
+                features->SM4 = registers[0] & b_SM4;
+                features->RAOINT = registers[0] & b_RAOINT;
+                features->AVXVNNI = registers[0] & b_AVXVNNI;
+                features->AVX512BF16 = registers[0] & b_AVX512BF16;
+                features->CMPCCXADD = registers[0] & b_CMPCCXADD;
+                features->FRED = registers[0] & b_FRED;
+                features->LKGS = registers[0] & b_LKGS;
+                features->WRMSRNS = registers[0] & b_WRMSRNS;
+                features->NMISRC = registers[0] & b_NMISRC;
+                features->AMXFP16 = registers[0] & b_AMXFP16;
+                features->HRESET = registers[0] & b_HRESET;
+                features->AVXIFMA = registers[0] & b_AVXIFMA;
+                features->MSRLIST = registers[0] & b_MSRLIST;
+                features->MOVRS = registers[0] & b_MOVRS;
 
-            // %ebx flags
-            features->PBNDKB = registers[1] & b_PBNDKB;
+                // %ebx flags
+                features->PBNDKB = registers[1] & b_PBNDKB;
 
-            // %edx flags
-            features->AVXVNNIINT8 = registers[3] & b_AVXVNNIINT8;
-            features->AVXNECONVERT = registers[3] & b_AVXNECONVERT;
-            features->AMXCOMPLEX = registers[3] & b_AMXCOMPLEX;
-            features->AVXVNNIINT16 = registers[3] & b_AVXVNNIINT16;
-            features->PREFETCHI = registers[3] & b_PREFETCHI;
-            features->USERMSR = registers[3] & b_USERMSR;
-            features->AVX10 = registers[3] & b_AVX10;
-            features->APXF = registers[3] & b_APXF;
+                // %edx flags
+                features->AVXVNNIINT8 = registers[3] & b_AVXVNNIINT8;
+                features->AVXNECONVERT = registers[3] & b_AVXNECONVERT;
+                features->AMXCOMPLEX = registers[3] & b_AMXCOMPLEX;
+                features->AVXVNNIINT16 = registers[3] & b_AVXVNNIINT16;
+                features->PREFETCHI = registers[3] & b_PREFETCHI;
+                features->USERMSR = registers[3] & b_USERMSR;
+                features->AVX10 = registers[3] & b_AVX10;
+                features->APXF = registers[3] & b_APXF;
+            }
         }
 
         // Leaf 13
-        if (basic_info->highest_leaf >= 13) {
+        if (basic_info->highest_basic_leaf >= 0xd) {
             // sub-leaf 1
             cpuid_extended(13, 1, registers);
 
@@ -314,8 +338,8 @@ int get_cpu_features(cpu_features* features, cpu_basic_info* basic_info) {
             features->XSAVEXFD = registers[0] & b_XSAVEXFD;
         }
 
-        // Leaf 0x14
-        if (basic_info->highest_leaf >= 0x14) {
+        // Leaf 20
+        if (basic_info->highest_basic_leaf >= 0x14) {
             // sub-leaf 0
             cpuid_extended(0x14, 0, registers);
 
@@ -323,8 +347,8 @@ int get_cpu_features(cpu_features* features, cpu_basic_info* basic_info) {
             features->PTWRITE = registers[1] & b_PTWRITE;
         }
 
-        // Keylocker leaf (leaf 0x19)
-        if (basic_info->highest_extended_leaf >= 0x19) {
+        // Keylocker leaf (leaf 25)
+        if (basic_info->highest_basic_leaf >= 0x19) {
             cpuid(0x19, registers);
 
             // %eax flags
@@ -333,7 +357,7 @@ int get_cpu_features(cpu_features* features, cpu_basic_info* basic_info) {
         }
 
         // AMX sub-leaf
-        if (basic_info->highest_extended_leaf >= 0x1e) {
+        if (basic_info->highest_basic_leaf >= 0x1e) {
             // sub-leaf 1
             cpuid_extended(0x1e, 1, registers);
 
@@ -346,7 +370,7 @@ int get_cpu_features(cpu_features* features, cpu_basic_info* basic_info) {
         }
 
         // Leaf 0x24
-        if (basic_info->highest_extended_leaf >= 0x24) {
+        if (basic_info->highest_basic_leaf >= 0x24) {
             cpuid_extended(0x24, 0, registers);
 
             // %ebx flags
@@ -354,6 +378,7 @@ int get_cpu_features(cpu_features* features, cpu_basic_info* basic_info) {
             features->AVX10_512 = registers[1] & b_AVX10_512;
         }
 
+        // Extended feature leaves
         // Leaf 0x80000001
         if (basic_info->highest_extended_leaf >= 0x80000001) {
             cpuid(0x80000001, registers);

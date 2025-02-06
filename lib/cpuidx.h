@@ -16,9 +16,9 @@ extern "C" {
 #if __clang_major__ >= 18
 #ifndef CPUIDX_BOOL_AVAILABLE
 #define CPUIDX_BOOL_AVAILABLE 1
-#endif // CPUIDX_BOOL_AVAILABLE
+#endif // !CPUIDX_BOOL_AVAILABLE
 #endif // __clang_major__ >= 18
-#if __clang_major__ >= 19 // C constexpr is supported on Clang 19+
+#if __clang_major__ >= 19 // Clang supports C23 constexpr from version 19
 #ifndef CPUIDX_CONSTEXPR_AVAILABLE
 #define CPUIDX_CONSTEXPR_AVAILABLE 1
 #endif // !CPUIDX_CONSTEXPR_AVAILABLE
@@ -49,7 +49,7 @@ struct cpu_basic_info {
     uint32_t family; /**< Family */
     uint32_t model; /**< Model */
     uint32_t stepping; /**< Stepping ID */
-    uint32_t highest_leaf; /**< Highest feature leaf */
+    uint32_t highest_basic_leaf; /**< Highest basic feature leaf */
     uint32_t highest_extended_leaf; /**< Highest extended feature leaf */
 };
 
