@@ -39,8 +39,6 @@ jobs:
         exclude:
           - os: windows-latest
             c_compiler: gcc
-#          - os: windows-latest
-#            c_compiler: cl
           - os: ubuntu-latest
             c_compiler: cl
           - os: macos-13
@@ -153,12 +151,6 @@ jobs:
           -S ${{ github.workspace }} -G Ninja
 
       - name: Build
-        if: matrix.os == 'windows-latest'
-        shell: cmd
-        run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} -j 3
-
-      - name: Build
-        if: matrix.os != 'windows-latest'
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} -j 3
 
       - name: Run cpuidz

@@ -16,17 +16,24 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-13 ]
         build_type: [ Release ]
-        c_compiler: [ clang ]
+        c_compiler: [ clang, cl ]
         include:
           - os: windows-latest
-            c_compiler: clang
-            cpp_compiler: clang++
+            c_compiler: cl
+            cpp_compiler: cl
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
           - os: macos-13
             c_compiler: clang
             cpp_compiler: clang++
+        exclude:
+          - os: windows-latest
+            c_compiler: clang
+          - os: ubuntu-latest
+            c_compiler: cl
+          - os: macos-13
+            c_compiler: cl
 
     steps:
       - name: Install Dependencies
@@ -40,8 +47,7 @@ jobs:
           elif [[ "${{ matrix.os }}" == "macos-13" ]]; then
             brew install ninja lld llvm@19
           elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            choco upgrade llvm -y
-            choco install nasm ninja -y
+            choco install ninja -y
           fi
 
       - uses: actions/checkout@v4
@@ -69,7 +75,7 @@ jobs:
           fi
 
       - name: Configure CMake
-        if: matrix.os == 'windows-latest' || matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest'
         # Configure CMake in a 'build' subdirectory.
         run: >
           cmake -B ${{ steps.strings.outputs.build-output-dir }}
@@ -90,8 +96,21 @@ jobs:
           -DCMAKE_EXE_LINKER_FLAGS="-L$(brew --prefix llvm@19)/lib/c++ -Wl,-rpath,$(brew --prefix llvm@19)/lib/c++"
           -S ${{ github.workspace }} -G Ninja
 
+      - uses: ilammy/msvc-dev-cmd@v1
+        if: matrix.os == 'windows-latest'
+
+      - name: Configure CMake
+        if: matrix.os == 'windows-latest'
+        shell: cmd
+        run: >
+          cmake -B ${{ steps.strings.outputs.build-output-dir }}
+          -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} 
+          -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} 
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DPACKAGE_PROJECT=ON
+          -S ${{ github.workspace }} -G Ninja
+
       - name: Build
-        # Build your program with the given configuration.
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} -j 3
 
       - name: Run cpuidz
