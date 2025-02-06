@@ -95,11 +95,11 @@ void print_basic_info(const cpu_basic_info& info) {
     if (const auto step = info.stepping; step)
         std::println("\tStepping id: {:<#4x} ({})", step, step);
 
-    if (const auto hl = info.highest_leaf; hl)
-        std::println("\tHighest feature leaf: {:#x} ({})", hl, hl);
+    if (const auto hl = info.highest_basic_leaf; hl)
+        std::println("\tHighest basic function number implemented: {:#x} ({})", hl, hl);
 
     if (const auto hxl = info.highest_extended_leaf; hxl)
-        std::println("\tHighest extended feature leaf: {:#x} ({})", hxl, hxl);
+        std::println("\tHighest extended function number implemented: {:#x} ({})", hxl, hxl);
 }
 
 
@@ -107,7 +107,7 @@ void print_basic_info(const cpu_basic_info& info) {
 /// \param feats A reference to a \p cpu_features structure containing the CPU features.
 void print_available_features(const cpu_features& feats) {
     static const std::unordered_map<std::pair<std::string, std::string>, bool, pair_hash> featureMap = {
-        {{"SSE3", "(Prescott New Instructions - PNI)"}, feats.SSE3},
+        {{"SSE3", "Prescott New Instructions - PNI"}, feats.SSE3},
         {{"PCLMULQDQ", "(carry-less multiply) instruction"}, feats.PCLMULQDQ},
         {{"DTES64", "64-bit debug store"}, feats.DTES64},
         {{"MONITOR", "MONITOR and MWAIT instructions (PNI)"}, feats.MONITOR},
@@ -365,7 +365,7 @@ int main([[maybe_unused]] const int argc, [[maybe_unused]] char** argv) {
             print_available_features(features);
             return 0;
         default:
-            std::println(stderr, "Failed to get CPU features");
+            std::println(stderr, "Failed to get CPU features.");
             return 1;
     }
 }

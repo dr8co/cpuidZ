@@ -21,9 +21,13 @@ void print_basic_info(const cpu_basic_info* const info) {
     if (info->family) printf("\tFamily: 0x%x (%u)\n", info->family, info->family);
     if (info->model) printf("\tModel : 0x%x (%u)\n", info->model, info->model);
     if (info->stepping) printf("\tStepping id: 0x%x (%u)\n", info->stepping, info->stepping);
-    if (info->highest_leaf) printf("\tHighest feature leaf: 0x%x (%u)\n", info->highest_leaf, info->highest_leaf);
+
+    if (info->highest_basic_leaf)
+        printf("\tHighest basic function number implemented: 0x%x (%u)\n", info->highest_basic_leaf,
+               info->highest_basic_leaf);
     if (info->highest_extended_leaf)
-        printf("\tHighest extended feature leaf: 0x%x (%u)\n", info->highest_extended_leaf, info->highest_extended_leaf);
+        printf("\tHighest extended function number implemented: 0x%x (%u)\n", info->highest_extended_leaf,
+               info->highest_extended_leaf);
 }
 
 /**
@@ -52,13 +56,13 @@ void print_available_features(const cpu_features* feats) {
         "HYPRVSR: Hypervisor present",
         "FPU: Onboard x87 FPU", "VME: Virtual 8086 mode extensions (such as VIF, VIP, PVI)",
         "DE: Debugging extensions (CR4 bit 3)", "PSE: Page Size Extension (4 MB pages)",
-        "TSC: Time Stamp Counter and RDTSC instruction", "MSR: 	Model-specific registers and RDMSR/WRMSR instructions",
-        "PAE: 	Physical Address Extension", "MCE: Machine Check Exception",
+        "TSC: Time Stamp Counter and RDTSC instruction", "MSR: Model-specific registers and RDMSR/WRMSR instructions",
+        "PAE: Physical Address Extension", "MCE: Machine Check Exception",
         "CX8: CMPXCHG8B (compare-and-swap) instruction", "APIC: Onboard Advanced Programmable Interrupt Controller",
         "SEP: SYSENTER and SYSEXIT fast system call instructions", "MTRR: Memory Type Range Registers",
         "PGE: Page Global Enable bit in CR4", "MCA: Machine check architecture",
         "CMOV:Conditional move: CMOV, FCMOV and FCOMI instructions", "PAT: Page Attribute Table",
-        "PSE36: 	36-bit page size extension", "PSN: Processor Serial Number supported and enabled",
+        "PSE36: 36-bit page size extension", "PSN: Processor Serial Number supported and enabled",
         "CLFSH: CLFLUSH cache line flush instruction (SSE2)", "DS: Debug store: save trace of executed jumps",
         "ACPI: Onboard thermal control MSRs for ACPI",
         "MMX: MMX instructions (64-bit SIMD)", "FXSR: FXSAVE, FXRSTOR instructions, CR4 bit 9",
@@ -164,11 +168,17 @@ int main() {
     cpu_features features = {};
     cpu_basic_info basic_info = {};
 
-    get_cpu_features(&features, &basic_info);
-
-    print_basic_info(&basic_info);
-    putchar('\n');
-    print_available_features(&features);
-
-    return 0;
+    switch (get_cpu_features(&features, &basic_info)) {
+        case -1:
+            fputs("CPUID instruction is not supported by your cpu.\n", stderr);
+            return 1;
+        case 0:
+            print_basic_info(&basic_info);
+            putchar('\n');
+            print_available_features(&features);
+            return 0;
+        default:
+            fputs("Failed to get CPU features.\n", stderr);
+            return 1;
+    }
 }

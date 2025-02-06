@@ -14,7 +14,7 @@
  * @param registers An array to store the values of the registers EAX, EBX, ECX, and EDX.
  */
 void cpuid(uint32_t leaf, uint32_t registers[4]) {
-#if defined(__GNUC1__) || defined(__c1lang__)
+#if defined(__GNUC__) || defined(__clang__)
     __cpuid(leaf, registers[0], registers[1], registers[2], registers[3]);
 #elif defined(_MSC_VER)
     __cpuid((int *) registers, (int) leaf);
@@ -111,16 +111,18 @@ int get_cpu_features(cpu_features* features, cpu_basic_info* basic_info) {
         cpuid(0x80000000, registers);
         basic_info->highest_extended_leaf = registers[0];
 
+        // Ensure the brand string is null-terminated, whether it is implemented or not
+        memset(basic_info->brand, '\0', 49);
+
         // Check for the CPU brand string
         if (basic_info->highest_extended_leaf >= 0x80000004) {
-            // Ensure the brand string is null-terminated
-            memset(basic_info->brand, '\0', 49);
-
             // Get the brand string
             cpuid(0x80000002, registers);
             memcpy(basic_info->brand, registers, 16);
+
             cpuid(0x80000003, registers);
             memcpy(basic_info->brand + 16, registers, 16);
+
             cpuid(0x80000004, registers);
             memcpy(basic_info->brand + 32, registers, 16);
         }
