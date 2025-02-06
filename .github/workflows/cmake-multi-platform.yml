@@ -152,7 +152,12 @@ jobs:
         if: matrix.os == 'windows-latest' && matrix.c_compiler == 'cl'
 
       - name: Build
-        # Build your program with the given configuration.
+        if: matrix.os == 'windows-latest'
+        shell: cmd
+        run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} -j 3
+
+      - name: Build
+        if: matrix.os != 'windows-latest'
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} -j 3
 
       - name: Run cpuidz
