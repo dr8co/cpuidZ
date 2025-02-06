@@ -4,6 +4,8 @@
 IFDEF RAX
 .code
 
+option casemap:none
+
 ; Declare the function for the linker
 PUBLIC _check_cpuid
 PUBLIC check_cpuid
@@ -32,6 +34,8 @@ ELSE
 .XMM
 .model flat, C
 .code
+
+option casemap:none
 
 PUBLIC _check_cpuid
 PUBLIC check_cpuid
