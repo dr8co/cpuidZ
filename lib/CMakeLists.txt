@@ -2,14 +2,14 @@
 add_library(cpuidx)
 
 if (MSVC)
-    enable_language(ASM_NASM)
+    enable_language(ASM_MASM)
     set_source_files_properties(check_cpuid.asm PROPERTIES LANGUAGE ASM_MASM)
 endif ()
 
 target_sources(cpuidx PRIVATE
         cpuidx.c
         # The assembly file is platform-dependent
-        $<IF:$<BOOL:${MSVC}>,check_cpuid_nasm.asm,check_cpuid.S>
+        $<IF:$<BOOL:${MSVC}>,check_cpuid.asm,check_cpuid.S>
 )
 
 add_library(cpuidx::cpuidx ALIAS cpuidx)
