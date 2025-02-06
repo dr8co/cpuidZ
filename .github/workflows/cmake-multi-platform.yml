@@ -139,6 +139,9 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           -S ${{ github.workspace }} -G Ninja
 
+      - uses: ilammy/msvc-dev-cmd@v1
+        if: matrix.os == 'windows-latest' && matrix.c_compiler == 'cl'
+
       - name: Configure CMake
         if: matrix.os == 'windows-latest' && matrix.c_compiler == 'cl'
         run: >
