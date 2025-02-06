@@ -44,8 +44,8 @@ set_target_properties(cpuidx PROPERTIES
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     if (MSVC)
         target_compile_options(cpuidx PRIVATE
-                /W4
-                /WX
+                $<$<COMPILE_LANGUAGE:C,CXX>:/W4>
+                $<$<COMPILE_LANGUAGE:C,CXX>:/WX>
         )
     elseif (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
         target_compile_options(cpuidx PRIVATE
