@@ -90,7 +90,7 @@ void cpuid_extended(uint32_t leaf, uint32_t sub_leaf, uint32_t registers[4]) {
  * @param basic_info A pointer to a \p cpu_basic_info structure to store the basic CPU information.
  * @return 0 on success, -1 if CPUID instruction is not supported, 1 if highest leaf is 0.
  */
-int get_cpu_features(cpu_features* features, cpu_basic_info* basic_info) {
+int get_cpu_features(cpu_features* CPUIDX_RESTRICT features, cpu_basic_info* CPUIDX_RESTRICT basic_info) {
     if (!check_cpuid()) return -1;
 
     uint32_t registers[4] = {0}; // Registers: EAX, EBX, ECX, EDX

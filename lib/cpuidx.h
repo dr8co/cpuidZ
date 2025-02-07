@@ -711,6 +711,19 @@ enum {
 };
 #endif
 
+#ifdef CPUIDX_LANG_CPP
+#if __GNUC__ || __clang__ || _MSC_VER
+// Support for '__restrict' in C++ is known on GCC, Clang, and MSVC
+#define CPUIDX_RESTRICT __restrict
+#else
+// Support for C++ '__restrict' is unknown on this compiler
+#define CPUIDX_RESTRICT
+#endif // __GNUC__ || __clang__ || _MSC_VER
+#else
+// 'Restrict' keyword is always available in C
+#define CPUIDX_RESTRICT restrict
+#endif
+
 typedef struct cpu_basic_info cpu_basic_info;
 typedef struct cpu_features cpu_features;
 
@@ -720,7 +733,7 @@ void cpuid(uint32_t leaf, uint32_t registers[4]);
 
 void cpuid_extended(uint32_t leaf, uint32_t sub_leaf, uint32_t registers[4]);
 
-int get_cpu_features(cpu_features* features, cpu_basic_info* basic_info);
+int get_cpu_features(cpu_features* CPUIDX_RESTRICT features, cpu_basic_info* CPUIDX_RESTRICT basic_info);
 
 #ifdef CPUIDX_LANG_CPP
 }
