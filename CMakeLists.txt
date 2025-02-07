@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.30)
 
 project(cpuidZ
-        VERSION 1.0.0
+        VERSION 2.0.0
         DESCRIPTION "A simple, lightweight x86 CPU features detector"
         LANGUAGES C ASM
 )
