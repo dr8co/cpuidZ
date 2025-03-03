@@ -10,33 +10,35 @@ if (BUILD_CPUIDZPP)
     target_sources(cpuidzpp PRIVATE main.cpp)
 endif ()
 
+set(WARNING_FLAGS_GNU
+        -Wall
+        -Wextra
+        -Werror
+)
+
+set(WARNING_FLAGS_MSVC
+        /W4
+        /WX
+)
+
 # Debug compile options
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    if (MSVC)
-        target_compile_options(cpuidz PRIVATE
-                /W4
-                /WX
+if (MSVC)
+    target_compile_options(cpuidz PRIVATE
+            $<$<CONFIG:Debug>:${WARNING_FLAGS_MSVC}>
+    )
+    if (BUILD_CPUIDZPP)
+        target_compile_options(cpuidzpp PRIVATE
+                $<$<CONFIG:Debug>:${WARNING_FLAGS_MSVC}>
         )
-        if (BUILD_CPUIDZPP)
-            target_compile_options(cpuidzpp PRIVATE
-                    /W4
-                    /WX
-            )
-        endif ()
-    elseif (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
-        target_compile_options(cpuidz PRIVATE
-                -Wall
-                -Wextra
-                -Werror
+    endif ()
+elseif (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
+    target_compile_options(cpuidz PRIVATE
+            $<$<CONFIG:Debug>:${WARNING_FLAGS_GNU}>
+    )
+    if (BUILD_CPUIDZPP)
+        target_compile_options(cpuidzpp PRIVATE
+                $<$<CONFIG:Debug>:${WARNING_FLAGS_GNU}>
         )
-        if (BUILD_CPUIDZPP)
-            target_compile_options(cpuidzpp PRIVATE
-                    -Wall
-                    -Wextra
-                    -Werror
-                    -Wpedantic
-            )
-        endif ()
     endif ()
 endif ()
 

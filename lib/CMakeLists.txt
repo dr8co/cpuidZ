@@ -40,18 +40,30 @@ set_target_properties(cpuidx PROPERTIES
         PUBLIC_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/cpuidx.h"
 )
 
+set(WARNING_FLAGS_GNU
+        -Wall
+        -Wextra
+        -Werror
+)
+
+set(WARNING_FLAGS_MSVC
+        /W4
+        /WX
+)
+
+# Generator expressions for c/c++ compilation and debug config
+set(compiling_c_cpp "$<BOOL:$<COMPILE_LANGUAGE:C,CXX>>")
+set(is_debug_build "$<BOOL:$<CONFIG:Debug>>")
+set(is_debug_c_cpp "$<AND:${compiling_c_cpp},${is_debug_build}>")
+
 # Additional compile options for the Debug build
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    if (MSVC)
-        target_compile_options(cpuidx PRIVATE
-                $<$<COMPILE_LANGUAGE:C,CXX>:/W4>
-                $<$<COMPILE_LANGUAGE:C,CXX>:/WX>
-        )
-    elseif (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
-        target_compile_options(cpuidx PRIVATE
-                -Wall
-                -Wextra
-                -Werror
-        )
-    endif ()
+if (MSVC)
+    target_compile_options(cpuidx PRIVATE
+            $<${is_debug_c_cpp}:${WARNING_FLAGS_MSVC}>
+    )
+elseif (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
+    target_compile_options(cpuidx PRIVATE
+            $<$<CONFIG:Debug>:${WARNING_FLAGS_GNU}>
+
+    )
 endif ()
